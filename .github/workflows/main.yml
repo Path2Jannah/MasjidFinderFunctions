@@ -26,10 +26,9 @@ jobs:
       
       - name: Install npm packages
         run: >
-          ls
-          echo
-          cd functions
-          npm install
+          ls;
+          cd functions;
+          npm install;
       - name: Deploy to firebase
         uses: w9jds/firebase-action@master
         with:
