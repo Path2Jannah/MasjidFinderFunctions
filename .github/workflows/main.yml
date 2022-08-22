@@ -27,11 +27,12 @@ jobs:
       - name: Install npm packages
         run: |
           ls,
-          cd functions,
-          npm install
-      - name: Deploy to firebase
-        uses: w9jds/firebase-action@master
-        with:
-            args: deploy --only functions
-        env:
-            FIREBASE_TOKEN: ${{ secrets.FIREBASETOKEN }}
+          echo what
+      #     cd functions,
+      #     npm install
+      # - name: Deploy to firebase
+      #   uses: w9jds/firebase-action@master
+      #   with:
+      #       args: deploy --only functions
+      #   env:
+      #       FIREBASE_TOKEN: ${{ secrets.FIREBASETOKEN }}
