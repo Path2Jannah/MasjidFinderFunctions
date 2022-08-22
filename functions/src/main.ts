@@ -2,6 +2,7 @@ import * as functions from "firebase-functions";
 import axios from "axios";
 import {SalaahTimesDaily} from "./models/SalaahTimesByCity";
 import {SalaahTimeCalendarByCity} from "./models/SalaahTimeCalendarByCity";
+// import {Response} from "./models/Response";
 
 export const helloWorld = functions.https.onRequest((request, response) => {
   functions.logger.info("Hello logs!", {structuredData: true});
@@ -114,18 +115,16 @@ export const getSalaahTime = functions.https.onRequest(async (
   response.send(JSON.stringify(data));
 });
 
-export const callSalaahTimeDaily = functions.https.onCall(async (
-    data, context
+export const callSalaahTimeDaily = functions.https.onRequest(async (
+    request, response
 ) => {
-  const country = data.country;
-  const city = data.city;
-  return await getSalaahTimes(country, city);
+  const data = request.body;
+  response.send(await getSalaahTimes(data.country, data.city));
 });
 
-export const callSalaahTimeCalendar = functions.https.onCall(async (
-    data, context
+export const callSalaahTimeCalendar = functions.https.onRequest(async (
+    request, response
 ) => {
-  const country = data.country;
-  const city = data.city;
-  return await getSalaahTimesCalendar(country, city);
+  const {country, city} = request.body;
+  response.send(await getSalaahTimesCalendar(country, city));
 });
