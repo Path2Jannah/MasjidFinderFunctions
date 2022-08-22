@@ -27,5 +27,5 @@ jobs:
       - name: Run a multi-line script
         run: |
           echo Add other actions to build,
-          echo "$FIREBASE_TOKEN"
+          echo "$FIREBASE_TOKEN" start deploy,
           firebase deploy --token "$FIREBASE_TOKEN"
