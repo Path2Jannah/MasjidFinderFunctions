@@ -11,24 +11,34 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: master
+      - name: Change to functions directory
+        run: cd functions
+      - name: Install dependencies
+        run: npm install
+      - name: Run lint
+        run: |
+            echo Running lint on src files;
+            npx eslint src;
+
   deploy:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - uses: actions/checkout@v2
         with:
           ref: master
       
-      - name: Install npm packages
-        run: >
-          ls;
-          cd functions;
-          npm install;
+      - name: Change to functions directory
+        run: cd functions
+      - name: Install dependencies
+        run: npm install;
       - name: Deploy to firebase
         uses: w9jds/firebase-action@master
         with:
