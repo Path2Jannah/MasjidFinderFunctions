@@ -25,9 +25,8 @@ jobs:
           ref: master
       
       - name: Install npm packages
-        run: |
-          ls,
-          echo what
+        run: ls
+      #    echo what
       #     cd functions,
       #     npm install
       # - name: Deploy to firebase
