@@ -14,16 +14,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v3
         with:
           ref: master
-      - name: Change to functions directory
+      - name: Run lint
         run: | 
             cd functions;
             npm install;
-      - name: Run lint
-        run: |
             echo Running lint on src files;
             npx eslint src;
 
@@ -35,10 +34,10 @@ jobs:
         with:
           ref: master
       
-      - name: Change to functions directory
-        run: cd functions
-      - name: Install dependencies
-        run: npm install;
+      - name: Get dependencies
+        run: | 
+            cd functions;
+            npm install;
       - name: Deploy to firebase
         uses: w9jds/firebase-action@master
         with:
