@@ -118,8 +118,7 @@ export const getSalaahTime = functions.https.onRequest(async (
 export const callSalaahTimeDaily = functions.https.onRequest(async (
     request, response
 ) => {
-  const data = request.body;
-  response.send(await getSalaahTimes(data.country, data.city));
+  response.send(await getSalaahTimes("Europe", "London"));
 });
 
 export const callSalaahTimeCalendar = functions.https.onRequest(async (
