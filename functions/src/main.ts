@@ -111,14 +111,14 @@ async function getCurrentTime(country: string, city: string) {
 export const getSalaahTime = functions.https.onRequest(async (
     request, response
 ) => {
-  const data = await getCurrentTime("Europe", "London");
+  const data = await getCurrentTime("United Kingdom", "London");
   response.send(JSON.stringify(data));
 });
 
 export const callSalaahTimeDaily = functions.https.onRequest(async (
     request, response
 ) => {
-  response.send(await getSalaahTimes("Europe", "London"));
+  response.send(await getSalaahTimes("United Kingdom", "London"));
 });
 
 export const callSalaahTimeCalendar = functions.https.onRequest(async (
