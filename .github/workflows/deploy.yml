@@ -16,17 +16,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
         with:
-          ref: master
+          node-versioin: 16.x
+      - uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles(‘**/functions/package-lock.json’) }}
+          restore-keys: |
+            ${{ runner.os }}-node-
       
-      - name: Get dependencies
+      - name: Build Cloud Functions
         run: | 
             cd functions;
-            npm install;
-      - name: Deploy to firebase
-        uses: w9jds/firebase-action@master
-        with:
-            args: deploy --only functions
-        env:
-            FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}  
+            npm ci;
+      - name: Create SA key
+        run: echo `${{ secrets.FIREBASE_SERVICE_ACCOUNT }}` > $HOME/gcloud.json
+      - name: Deploy Cloud Functions
+        run: export GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcloud.json && npx firebase-tools-deploy --only functions --json
