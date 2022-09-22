@@ -35,7 +35,9 @@ jobs:
         run: | 
             cd functions;
             npm ci;
+            npm install --save firebase-tools@latest;
+            npm install --save firebase-functions@latest;
       - name: Create SA key
         run: echo `${{ secrets.FIREBASE_SERVICE_ACCOUNT }}` > $HOME/gcloud.json
       - name: Deploy Cloud Functions
-        run: export GOOGLE_APPLICATION_CREDENTIALS=gcloud.json && firebase deploy --only functions
+        run: export GOOGLE_APPLICATION_CREDENTIALS=gcloud.json && npx firebase-tools deploy --only functions
