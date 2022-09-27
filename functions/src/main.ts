@@ -4,11 +4,6 @@ import {SalaahTimesDaily} from "./models/SalaahTimesByCity";
 import {SalaahTimeCalendarByCity} from "./models/SalaahTimeCalendarByCity";
 // import {Response} from "./models/Response";
 
-export const helloWorld = functions.https.onRequest((request, response) => {
-  functions.logger.info("Hello logs!", {structuredData: true});
-  response.send("Hello from Firebase!");
-});
-
 type Time = {
   time: string;
 }
@@ -108,13 +103,6 @@ async function getCurrentTime(country: string, city: string) {
   }
 }
 
-export const getSalaahTime = functions.https.onRequest(async (
-    request, response
-) => {
-  const data = await getCurrentTime("United Kingdom", "London");
-  response.send(JSON.stringify(data));
-});
-
 export const callSalaahTimeDailyonCall = functions.https.onCall(async (
     data, context
 ) => {
@@ -129,11 +117,4 @@ export const callSalaahTimeDaily = functions.https.onRequest(async (
   const country = request.body.country;
   const city = request.body.city;
   response.send(await getSalaahTimes(country, city));
-});
-
-export const callSalaahTimeCalendar = functions.https.onRequest(async (
-    request, response
-) => {
-  const {country, city} = request.body;
-  response.send(await getSalaahTimesCalendar(country, city));
 });
