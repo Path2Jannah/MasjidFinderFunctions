@@ -123,6 +123,14 @@ export const callSalaahTimeDailyonCall = functions.https.onCall(async (
   return (await getSalaahTimes(country, city));
 });
 
+export const callSalaahTimeDaily = functions.https.onRequest(async (
+    request, response
+) => {
+  const country = request.body.country;
+  const city = request.body.city;
+  response.send(await getSalaahTimes(country, city));
+});
+
 export const callSalaahTimeCalendar = functions.https.onRequest(async (
     request, response
 ) => {
