@@ -18,6 +18,8 @@ export const getCoordinates = functions.https.onRequest(async (req, res) => {
       },
     });
 
+    console.log("Response:", response)
+
     const {lat, lng} = response.data.results[0].geometry.location;
 
     res.send({lat, lng});
