@@ -1,6 +1,6 @@
 import * as functions from "firebase-functions";
 import axios from "axios";
-const admin = require('firebase-admin');
+import admin from "firebase-admin";
 
 admin.initializeApp();
 
@@ -32,21 +32,24 @@ async function fetchSalaahTimings(params: SalaahTimingParams) {
   }
 }
 
-exports.readFirestoreCollection = functions.https.onRequest(async (req, res) => {
-  try {
-    const collectionName = req.body.collection; // Assuming the input is passed in the request body
+exports.readFirestoreCollection =
+functions.https.onRequest(
+    async (req, res) => {
+      try {
+        const collectionName = req.body.collection;
+        // Assuming the input is passed in the request body
 
-    // Read the collection from Firestore
-    const collectionRef = admin.firestore().collection(collectionName);
-    const snapshot = await collectionRef.get();
-    const data = snapshot.docs.map((doc) => doc.data());
+        // Read the collection from Firestore
+        const collectionRef = admin.firestore().collection(collectionName);
+        const snapshot = await collectionRef.get();
+        const data = snapshot.docs.map((doc) => doc.data());
 
-    res.status(200).json(data);
-  } catch (error) {
-    console.error('Error reading Firestore collection:', error);
-    res.status(500).send('Error reading Firestore collection');
-  }
-});
+        res.status(200).json(data);
+      } catch (error) {
+        console.error("Error reading Firestore collection:", error);
+        res.status(500).send("Error reading Firestore collection");
+      }
+    });
 
 export const getSalaahTiming = functions.https.onRequest(
     async (request, response) => {
