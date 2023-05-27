@@ -1,8 +1,32 @@
 import * as functions from "firebase-functions";
 import axios from "axios";
 import admin from "firebase-admin";
+import {Client, GeocodeResponse} from "@googlemaps/google-maps-services-js";
 
 admin.initializeApp();
+const googleMaps = new Client({});
+const API_KEY = "AIzaSyBdZ1SEBOrlJWam8oXAUvJQgs6AGoyw7wY";
+
+export const getCoordinates = functions.https.onRequest(async (req, res) => {
+  const address = req.query.address;
+
+  try {
+    const response: GeocodeResponse = await googleMaps.geocode({
+      params: {
+        address: address as string,
+        key: API_KEY,
+      },
+    });
+
+    const {lat, lng} = response.data.results[0].geometry.location;
+
+    res.send({lat, lng});
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send("An error occurred");
+  }
+});
+
 
 interface SalaahTimingParams {
   date: string;
@@ -43,9 +67,9 @@ functions.https.onRequest(
         const collectionRef = admin.firestore().collection(collectionName);
         const snapshot = await collectionRef.get();
         const data = snapshot.docs.map((doc) => doc.data());
-        const areas = data.map(entry => entry.area)
+        const areas = data.map((entry) => entry.area);
 
-        console.log(areas)
+        console.log(areas);
         res.status(200).json(data);
       } catch (error) {
         console.error("Error reading Firestore collection:", error);

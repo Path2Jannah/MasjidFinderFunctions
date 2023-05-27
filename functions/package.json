@@ -16,6 +16,8 @@
   },
   "main": "lib/main.js",
   "dependencies": {
+    "@googlemaps/google-maps-services-js": "^3.3.31",
+    "@types/node": "^20.2.5",
     "axios": "^0.27.2",
     "firebase-admin": "^10.0.2",
     "firebase-functions": "^3.23.0"
@@ -27,7 +29,7 @@
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-import": "^2.25.4",
     "firebase-functions-test": "^0.2.0",
-    "typescript": "^4.5.4"
+    "typescript": "^4.9.5"
   },
   "private": true
 }
