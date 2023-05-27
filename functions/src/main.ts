@@ -36,7 +36,7 @@ exports.readFirestoreCollection =
 functions.https.onRequest(
     async (req, res) => {
       try {
-        const collectionName = req.body.collection;
+        const collectionName = req.query.collection as string;
         // Assuming the input is passed in the request body
 
         // Read the collection from Firestore
