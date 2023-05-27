@@ -14,7 +14,7 @@ export const getCoordinates = functions.https.onRequest(async (req, res) => {
     const response: GeocodeResponse = await googleMaps.geocode({
       params: {
         address: address as string,
-        key: API_KEY,
+        key: "AIzaSyBdZ1SEBOrlJWam8oXAUvJQgs6AGoyw7wY",
       },
     });
 
