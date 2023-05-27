@@ -43,7 +43,9 @@ functions.https.onRequest(
         const collectionRef = admin.firestore().collection(collectionName);
         const snapshot = await collectionRef.get();
         const data = snapshot.docs.map((doc) => doc.data());
+        const areas = data.map(entry => entry.area)
 
+        console.log(areas)
         res.status(200).json(data);
       } catch (error) {
         console.error("Error reading Firestore collection:", error);
