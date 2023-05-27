@@ -1,5 +1,8 @@
 import * as functions from "firebase-functions";
 import axios from "axios";
+const admin = require('firebase-admin');
+
+admin.initializeApp();
 
 interface SalaahTimingParams {
   date: string;
@@ -21,13 +24,29 @@ async function fetchSalaahTimings(params: SalaahTimingParams) {
         method,
       },
     });
-    const prayerTimings = response.data.data.timings;
-    console.log(prayerTimings);
+    const salaahTimings = response.data.data.timings;
+    console.log(salaahTimings);
   } catch (error) {
     // Handle error
     console.error("Error fetching prayer timings:", error);
   }
 }
+
+exports.readFirestoreCollection = functions.https.onRequest(async (req, res) => {
+  try {
+    const collectionName = req.body.collection; // Assuming the input is passed in the request body
+
+    // Read the collection from Firestore
+    const collectionRef = admin.firestore().collection(collectionName);
+    const snapshot = await collectionRef.get();
+    const data = snapshot.docs.map((doc) => doc.data());
+
+    res.status(200).json(data);
+  } catch (error) {
+    console.error('Error reading Firestore collection:', error);
+    res.status(500).send('Error reading Firestore collection');
+  }
+});
 
 export const getSalaahTiming = functions.https.onRequest(
     async (request, response) => {
@@ -39,9 +58,9 @@ export const getSalaahTiming = functions.https.onRequest(
           method: parseInt(request.query.method as string, 3),
         };
 
-        const prayerTimings = await fetchSalaahTimings(params);
+        const salaahTimings = await fetchSalaahTimings(params);
 
-        response.json(prayerTimings);
+        response.json(salaahTimings);
       } catch (error) {
         console.error("Error fetching prayer timings:", error);
         response.status(500).send(
