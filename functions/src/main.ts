@@ -5,7 +5,6 @@ import {Client, GeocodeResponse} from "@googlemaps/google-maps-services-js";
 
 admin.initializeApp();
 const googleMaps = new Client({});
-const API_KEY = "AIzaSyBdZ1SEBOrlJWam8oXAUvJQgs6AGoyw7wY";
 
 export const getCoordinates = functions.https.onRequest(async (req, res) => {
   const address = req.query.address;
