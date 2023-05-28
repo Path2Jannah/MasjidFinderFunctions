@@ -37,12 +37,14 @@ export const closestList = functions.https.onRequest(async (req, res) => {
         (area:string) => area.toLowerCase());
     const resultJson: any = {};
     for (const entries of areaInLowercase) {
+      console.log(entries);
       const response = await googleMaps.geocode({
         params: {
           address: entries,
           key: "AIzaSyCgK6O9xJIpjntal0ARJFm9noqxN4wHDXc",
         },
       });
+      console.log(response.data.results[0].geometry.location);
       const {lat, lng} = response.data.results[0].geometry.location;
       const areaData = {
         area: entries,
