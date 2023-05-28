@@ -35,7 +35,23 @@ export const closestList = functions.https.onRequest(async (req, res) => {
     const uniqueAreaObj = {areas: uniqueAreas};
     const areaInLowercase = uniqueAreaObj.areas.map(
         (area:string) => area.toLowerCase());
-    res.status(200).json(areaInLowercase);
+    const resultJson: any = {};
+    for (const data of areaInLowercase) {
+      const response = await googleMaps.geocode({
+        params: {
+          address: data,
+          key: "AIzaSyCgK6O9xJIpjntal0ARJFm9noqxN4wHDXc",
+        },
+      });
+      const {lat, lng} = response.data.results[0].geometry.location;
+      const areaData = {
+        area: data,
+        lat: lat,
+        lng: lng,
+      };
+      resultJson[data] = areaData;
+    }
+    res.status(200).json(resultJson);
   } catch (error) {
     console.error("Error reading Firestore collection: ", error);
     res.status(500).send("Error reading Firestore collection");
