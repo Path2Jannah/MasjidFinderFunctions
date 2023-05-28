@@ -36,6 +36,7 @@ jobs:
       - name: Build Cloud Functions
         run: | 
             cd functions;
+            cat src/main.ts;
             npm ci;
             npm install --save firebase-tools@latest;
             npm install --save firebase-functions@latest;
