@@ -31,26 +31,30 @@ export const getCoordinates = functions.https.onRequest(async (req, res) => {
 
 export const closestList = functions.https.onRequest(async (req, res) => {
   try {
-    const data = await getJsonArray()
-    const uniqueAreas = [...new Set(data.map(entry => entry.area))];
+    const data = await getJsonArray();
+    const uniqueAreas = [...new Set(data.map((entry) => entry.area))];
     const uniqueAreaObj = {areas: uniqueAreas};
     res.status(200).json(uniqueAreaObj);
   } catch (error) {
     console.error("Error reading Firestore collection:", error);
     res.status(500).send("Error reading Firestore collection");
   }
-})
+});
 
+/**
+ * Add JDoc
+ * @return {Promise<admin.firestore.DocumentData[]>}
+ */
 async function getJsonArray(): Promise<admin.firestore.DocumentData[]> {
   try {
     // Read the collection from Firestore
     const collectionRef = admin.firestore().collection("masjid_cape_town");
     const snapshot = await collectionRef.get();
     const data = snapshot.docs.map((doc) => doc.data());
-    return data
+    return data;
   } catch (error) {
     console.error("Error reading Firestore collection:", error);
-    throw error
+    throw error;
   }
 }
 
@@ -60,9 +64,11 @@ async function getJsonArray(): Promise<admin.firestore.DocumentData[]> {
 // Confirm the area in the firestore database
 // Get the geolocation data of each area
 // Store that geolocation data of each area in a realtime database
-// Write a function that takes the geolocation data of the user. Use this data to then determine which area the user is in.
-// Write a function that will collect all the masjids in the users area from the JSON array
-// Determine the order of the location. 
+// Write a function that takes the geolocation data of the user.
+// Use this data to then determine which area the user is in.
+// Write a function that will collect all the
+// masjids in the users area from the JSON array
+// Determine the order of the location.
 
 export const getAddress = functions.https.onRequest(async (req, res) => {
   const placeName = req.query.place as string;
