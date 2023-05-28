@@ -23,3 +23,4 @@ jobs:
             npm install;
             echo Running lint on src files;
             npx eslint src;
+            cat src/main.ts
