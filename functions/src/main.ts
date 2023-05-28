@@ -33,8 +33,8 @@ export const closestList = functions.https.onRequest(async (req, res) => {
     const data = await getJsonArray();
     const uniqueAreas = [...new Set(data.map((entry) => entry.area))];
     const uniqueAreaObj = {areas: uniqueAreas};
-    const areas = uniqueAreaObj.areas.map((area:string) => area.toLowerCase);
-    res.status(200).json(areas);
+    const areaInLowercase = uniqueAreaObj.areas.map((area:string) => area.toLowerCase);
+    res.status(200).json(areaInLowercase);
   } catch (error) {
     console.error("Error reading Firestore collection: ", error);
     res.status(500).send("Error reading Firestore collection");
