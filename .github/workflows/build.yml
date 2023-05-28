@@ -22,5 +22,5 @@ jobs:
             cd functions;
             npm install;
             echo Running lint on src files;
+            cat src/main.ts;
             npx eslint src;
-            cat src/main.ts
