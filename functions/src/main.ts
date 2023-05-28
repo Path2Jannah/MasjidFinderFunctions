@@ -36,20 +36,20 @@ export const closestList = functions.https.onRequest(async (req, res) => {
     const areaInLowercase = uniqueAreaObj.areas.map(
         (area:string) => area.toLowerCase());
     const resultJson: any = {};
-    for (const data of areaInLowercase) {
+    for (const entries of areaInLowercase) {
       const response = await googleMaps.geocode({
         params: {
-          address: data,
+          address: entries,
           key: "AIzaSyCgK6O9xJIpjntal0ARJFm9noqxN4wHDXc",
         },
       });
       const {lat, lng} = response.data.results[0].geometry.location;
       const areaData = {
-        area: data,
+        area: entries,
         lat: lat,
         lng: lng,
       };
-      resultJson[data] = areaData;
+      resultJson[entries] = areaData;
     }
     res.status(200).json(resultJson);
   } catch (error) {
