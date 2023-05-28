@@ -22,4 +22,4 @@ jobs:
             cd functions;
             npm install;
             echo Running lint on src files;
-            npx eslint --fix src;
+            npx eslint src;
