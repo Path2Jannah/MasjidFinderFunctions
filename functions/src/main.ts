@@ -5,6 +5,7 @@ import {Client, GeocodeResponse} from "@googlemaps/google-maps-services-js";
 
 admin.initializeApp();
 const googleMaps = new Client({});
+const API_KEY = "AIzaSyBdZ1SEBOrlJWam8oXAUvJQgs6AGoyw7wY";
 
 export const getCoordinates = functions.https.onRequest(async (req, res) => {
   const address = req.query.address;
@@ -13,7 +14,7 @@ export const getCoordinates = functions.https.onRequest(async (req, res) => {
     const response: GeocodeResponse = await googleMaps.geocode({
       params: {
         address: address as string,
-        key: "AIzaSyBdZ1SEBOrlJWam8oXAUvJQgs6AGoyw7wY",
+        key: API_KEY,
       },
     });
 
@@ -28,6 +29,27 @@ export const getCoordinates = functions.https.onRequest(async (req, res) => {
   }
 });
 
+export const getAddress = functions.https.onRequest(async (req, res) => {
+  const placeName = req.query.place as string;
+
+  try {
+    // Use the Geocoding API to get the address of the place
+    const response: GeocodeResponse = await googleMaps.geocode({
+      params: {
+        address: placeName,
+        key: API_KEY,
+      },
+    });
+
+    // Extract the formatted address from the response
+    const address = response.data.results[0].formatted_address;
+
+    res.send({address});
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send("An error occurred");
+  }
+});
 
 interface SalaahTimingParams {
   date: string;
