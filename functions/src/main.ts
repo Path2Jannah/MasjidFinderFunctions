@@ -3,6 +3,7 @@ import axios from "axios";
 import admin from "firebase-admin";
 import {Client, GeocodeResponse} from "@googlemaps/google-maps-services-js";
 import {GeolocationService} from "./GeolocationService";
+import {AreaGeolocation} from "./models/AreaGeolocation";
 
 admin.initializeApp();
 const googleMaps = new Client({});
@@ -21,14 +22,20 @@ export const getNearbyMosques = functions.https.onRequest(async (req, res) => {
 export const constructAreaGeolocationTable = functions.https.onRequest(
     async (req, res) => {
       const areaInLowercase = await getAreaList();
+      const resultJson: { areas: AreaGeolocation[] } = {areas: []};
 
-      areaInLowercase.forEach(async (str) => {
-        const location = await geolocationService.getCoordinates(str);
-        console.log(
-            `For area: ${str}, latitude: ${location.latitude},
-            longitude: ${location.longitude}`
-        );
-      });
+      await Promise.all(
+          areaInLowercase.map(async (str) => {
+            const location = await geolocationService.getCoordinates(str);
+            const areaJson: AreaGeolocation = {
+              area: str,
+              lat: location.latitude,
+              long: location.longitude,
+            };
+            resultJson.areas.push(areaJson);
+          })
+      );
+      res.json(resultJson);
     });
 
 export const getCoordinates = functions.https.onRequest(async (req, res) => {
