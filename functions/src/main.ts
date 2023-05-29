@@ -12,7 +12,8 @@ new GeolocationService("AIzaSyCgK6O9xJIpjntal0ARJFm9noqxN4wHDXc", googleMaps);
 
 export const getNearbyMosques = functions.https.onRequest(async (req, res) => {
   const currentLocation = req.query.currentLocation;
-  const response = await geolocationService.getCoordinates(currentLocation as string);
+  const response = await geolocationService.getCoordinates(
+    currentLocation as string);
   res.status(200).send(`Response: ${response.latitude}, ${response.longitude}`);
 });
 
