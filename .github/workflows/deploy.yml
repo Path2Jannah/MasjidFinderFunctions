@@ -14,9 +14,10 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+        with:
+          ref: Geolocation
       - uses: actions/setup-node@v1
         with:
           node-version: 16.x
@@ -30,10 +31,10 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/functions/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-      
       - name: Build Cloud Functions
         run: | 
             cd functions;
+            cat src/main.ts;
             npm ci;
             npm install --save firebase-tools@latest;
             npm install --save firebase-functions@latest;
