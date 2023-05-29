@@ -3,14 +3,13 @@ import axios from "axios";
 import admin from "firebase-admin";
 import {Client, GeocodeResponse} from "@googlemaps/google-maps-services-js";
 import {GeolocationService} from "./GeolocationService";
-import { AreaGeolocation } from "./models/AreaGeolocation";
+import {AreaGeolocation} from "./models/AreaGeolocation";
 
 admin.initializeApp();
 const googleMaps = new Client({});
 
 const geolocationService =
 new GeolocationService("AIzaSyCgK6O9xJIpjntal0ARJFm9noqxN4wHDXc", googleMaps);
-
 
 
 export const getNearbyMosques = functions.https.onRequest(async (req, res) => {
@@ -20,14 +19,18 @@ export const getNearbyMosques = functions.https.onRequest(async (req, res) => {
   res.status(200).send(`Response: ${response.latitude}, ${response.longitude}`);
 });
 
-export const constructAreaGeolocationTable = functions.https.onRequest(async (req, res) => {
-  const areaInLowercase = await getAreaList()
+export const constructAreaGeolocationTable = functions.https.onRequest(
+    async (req, res) => {
+      const areaInLowercase = await getAreaList();
 
-  areaInLowercase.forEach(async (str) => {
-    const location = await geolocationService.getCoordinates(str);
-    console.log(`For area: ${str}, latitude: ${location.latitude}, longitude: ${location.longitude}`)
-  })
-});
+      areaInLowercase.forEach(async (str) => {
+        const location = await geolocationService.getCoordinates(str);
+        console.log(
+            `For area: ${str}, latitude: ${location.latitude},
+            longitude: ${location.longitude}`
+        );
+      });
+    });
 
 export const getCoordinates = functions.https.onRequest(async (req, res) => {
   const address = req.query.address;
@@ -52,8 +55,8 @@ export const getCoordinates = functions.https.onRequest(async (req, res) => {
 });
 
 /**
- * 
- * @returns {Promise<string[]>}
+ *
+ * @return {Promise<string[]>}
  */
 async function getAreaList(): Promise<string[]> {
   try {
@@ -64,7 +67,7 @@ async function getAreaList(): Promise<string[]> {
         (area:string) => area.toLowerCase());
     return areaInLowercase;
   } catch (error) {
-    throw new Error("Error fetching firestore collection list")
+    throw new Error("Error fetching firestore collection list");
   }
 }
 
@@ -99,13 +102,6 @@ export const closestList = functions.https.onRequest(async (req, res) => {
     res.status(500).send("Error reading Firestore collection");
   }
 });
-
-function mapToJustAreaObject(data: admin.firestore.DocumentData[]): string[] {
-  const uniqueAreas = {areas: [...new Set(data.map((entry) => entry.area))]};
-  const dataInLowercase = uniqueAreas.areas.map(
-    (area: string) => area.toLowerCase()
-  );
-}
 
 /**
  * Add JDoc
