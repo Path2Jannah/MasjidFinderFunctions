@@ -2,9 +2,19 @@ import * as functions from "firebase-functions";
 import axios from "axios";
 import admin from "firebase-admin";
 import {Client, GeocodeResponse} from "@googlemaps/google-maps-services-js";
+import {GeolocationService} from "./GeolocationService";
 
 admin.initializeApp();
 const googleMaps = new Client({});
+
+const geolocationService =
+new GeolocationService("AIzaSyCgK6O9xJIpjntal0ARJFm9noqxN4wHDXc", googleMaps);
+
+export const getNearbyMosques = functions.https.onRequest(async (req, res) => {
+  const currentLocation = req.query.currentLocation;
+  console.log(geolocationService.getCoordinates(currentLocation as string));
+  res.status(200).send("Okay");
+});
 
 export const getCoordinates = functions.https.onRequest(async (req, res) => {
   const address = req.query.address;
