@@ -3,7 +3,6 @@ import axios from "axios";
 import admin from "firebase-admin";
 import {Client, GeocodeResponse} from "@googlemaps/google-maps-services-js";
 import {GeolocationService} from "./GeolocationService";
-import {AreaGeolocation} from "./models/AreaGeolocation";
 
 admin.initializeApp();
 const googleMaps = new Client({});
