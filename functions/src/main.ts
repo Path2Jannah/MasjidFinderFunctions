@@ -11,6 +11,10 @@ const googleMaps = new Client({});
 const geolocationService =
 new GeolocationService("AIzaSyCgK6O9xJIpjntal0ARJFm9noqxN4wHDXc", googleMaps);
 
+export const helloWorld = functions.https.onRequest(async (req, res) => {
+  res.send("Hello world");
+})
+
 
 export const getNearbyMosques = functions.https.onRequest(async (req, res) => {
   const currentLocation = req.query.currentLocation;
