@@ -24,6 +24,12 @@ export class FirestoreService {
     }
   }
 
+  public async getCollection(): Promise<FirebaseFirestore.DocumentData[]> {
+    const collectionSnapshot = await this.collection.get();
+    const data = collectionSnapshot.docs.map((doc) => doc.data());
+    return data;
+  }
+
   // Update a document by its ID
   public async updateDocument(documentId: string, updateData: FirebaseFirestore.UpdateData): Promise<void> {
     await this.collection.doc(documentId).update(updateData);
