@@ -7,7 +7,7 @@ import {AxiosService} from "./services/AxiosService";
  * Class SalaahTimeRequests
  */
 export class SalaahTimeRequests {
-  private axiosService = new AxiosService("https://api.aladhan.com/v1/timings/", null);
+  private axiosService = new AxiosService("https://api.aladhan.com/v1/timings/");
 
   public async getSalaahTimesDailyCapeTown(date: string): Promise<SalaahTime> {
     try {
