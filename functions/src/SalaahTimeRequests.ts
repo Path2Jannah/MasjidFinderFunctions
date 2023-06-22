@@ -1,12 +1,12 @@
 /* eslint-disable valid-jsdoc */
 /* eslint-disable require-jsdoc */
 
-import AxiosService from "./services/AxiosService";
+import {AxiosService} from "./services/AxiosService";
 /**
  * Class SalaahTimeRequests
  */
 export class SalaahTimeRequests {
-  private axiosService = new AxiosService("http://api.aladhan.com/v1/timings");
+  private axiosService = new AxiosService("http://api.aladhan.com/v1/timings", null);
 
   public async getSalaahTimesDailyCapeTown(date: string): Promise<any> {
     this.axiosService.get(
@@ -22,4 +22,4 @@ export class SalaahTimeRequests {
   }
 }
 
-export default AxiosService;
+export default SalaahTimeRequests;

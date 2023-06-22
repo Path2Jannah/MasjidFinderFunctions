@@ -47,7 +47,7 @@ export class AxiosService {
       config?: AxiosRequestConfig
   ): Promise<T> {
     const response = await this.axiosInstance.get<T>(url, config);
-    return response;
+    return response.data;
   }
 
   public async post<T>(
@@ -56,7 +56,7 @@ export class AxiosService {
       config?: AxiosRequestConfig
   ): Promise<T> {
     const response = await this.axiosInstance.post<T>(url, data, config);
-    return response;
+    return response.data;
   }
 }
 
