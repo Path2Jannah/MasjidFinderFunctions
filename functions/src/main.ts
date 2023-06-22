@@ -11,7 +11,7 @@ import {GeolocationService} from "./services/GeolocationService";
 import {FirestoreService} from "./services/FirestoreService";
 // import {RealtimeDatabaseService} from "./services/RealtimeDatabaseService";
 import {SalaahTimeRequests} from "./SalaahTimeRequests";
-import { SalaahTime } from "./models/SalaahTime";
+import {SalaahTime} from "./models/SalaahTime";
 
 admin.initializeApp();
 const googleMaps = new Client({});
