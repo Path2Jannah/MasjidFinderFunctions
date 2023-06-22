@@ -11,6 +11,7 @@ import {GeolocationService} from "./services/GeolocationService";
 import {FirestoreService} from "./services/FirestoreService";
 // import {RealtimeDatabaseService} from "./services/RealtimeDatabaseService";
 import {SalaahTimeRequests} from "./SalaahTimeRequests";
+import {firestore} from "firebase-admin";
 
 admin.initializeApp();
 const googleMaps = new Client({});
@@ -22,7 +23,7 @@ const geolocationService =
 new GeolocationService("AIzaSyCgK6O9xJIpjntal0ARJFm9noqxN4wHDXc", googleMaps);
 
 const firestoreService =
-new FirestoreService(admin, "masjid_cape_town");
+new FirestoreService(new admin.firestore.Firestore, "masjid_cape_town");
 
 // const realtimeDatabaseService =
 // new RealtimeDatabaseService();
