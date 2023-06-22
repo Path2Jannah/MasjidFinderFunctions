@@ -32,8 +32,8 @@ export class AxiosService {
   }
 
   private handleResponse(response: AxiosResponse) {
-    console.log("Axios response data: ", response.data);
-    return response.data;
+    console.log("Axios response data: ", response);
+    return response;
   }
 
   private handleError(response: AxiosResponse) {
@@ -47,7 +47,7 @@ export class AxiosService {
   ): Promise<AxiosResponse> {
     console.log("Axios request URL: ", url);
     const response = await this.axiosInstance.get(url, config);
-    return response.data;
+    return response;
   }
 
   public async post<T>(
