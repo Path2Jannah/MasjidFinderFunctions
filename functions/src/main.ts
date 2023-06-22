@@ -2,8 +2,10 @@ import * as functions from "firebase-functions";
 import axios from "axios";
 import admin from "firebase-admin";
 import {Client, GeocodeResponse} from "@googlemaps/google-maps-services-js";
-import {GeolocationService} from "./GeolocationService";
+import {GeolocationService} from "./services/GeolocationService";
 import {AreaGeolocation} from "./models/AreaGeolocation";
+import FirestoreService from "./services/FirestoreService";
+import { RealtimeDatabaseService } from "./services/RealtimeDatabaseService";
 
 admin.initializeApp();
 const googleMaps = new Client({});
@@ -11,10 +13,11 @@ const googleMaps = new Client({});
 const geolocationService =
 new GeolocationService("AIzaSyCgK6O9xJIpjntal0ARJFm9noqxN4wHDXc", googleMaps);
 
-export const helloWorld = functions.https.onRequest(async (req, res) => {
-  res.send("Hello world");
-})
+const firestoreService = 
+new FirestoreService(admin, "masjid_cape_town")
 
+const realtimeDatabaseService =
+new RealtimeDatabaseService()
 
 export const getNearbyMosques = functions.https.onRequest(async (req, res) => {
   const currentLocation = req.query.currentLocation;
@@ -22,6 +25,61 @@ export const getNearbyMosques = functions.https.onRequest(async (req, res) => {
     currentLocation as string);
   res.status(200).send(`Response: ${response.latitude}, ${response.longitude}`);
 });
+
+export const writeLocationGeocodeTableToRealtimeDatabase = functions.https.onRequest(async (req, res) => {
+  const data = await getAreaList()
+  const result: { areas: AreaGeolocation[] } = {areas: []};
+  await Promise.all(
+    data.map(async (areaLocation) => {
+      try {
+        const geocode = await geolocationService.getCoordinates(areaLocation);
+        const resultObject: AreaGeolocation = {
+          area: areaLocation,
+          lat: geocode.latitude,
+          long: geocode.longitude,
+        };
+        result.areas.push(resultObject);
+      } catch (error) {
+        console.error(error as string);
+        const errorObject: AreaGeolocation = {
+          area: areaLocation,
+          lat: 0,
+          long: 0,
+        };
+        result.areas.push(errorObject);
+      }
+    })
+  );
+  realtimeDatabaseService.setValue("/", result);
+  res.status(200).send("Success");
+});
+
+async function AreaGeolocationTable(): Promise<{areas: AreaGeolocation[]}> {
+  const areaInLowercase = await getAreaList();
+  const resultJson: { areas: AreaGeolocation[] } = {areas: []};
+      await Promise.all(
+          areaInLowercase.map(async (str) => {
+            try {
+              const location = await geolocationService.getCoordinates(str);
+              const areaJson: AreaGeolocation = {
+                area: str,
+                lat: location.latitude,
+                long: location.longitude,
+              };
+              resultJson.areas.push(areaJson);
+            } catch (error) {
+              console.error(error as string);
+              const areaJson: AreaGeolocation = {
+                area: str,
+                lat: 1,
+                long: 1,
+              };
+              resultJson.areas.push(areaJson);
+            }
+          })
+      );
+    return resultJson
+}
 
 export const constructAreaGeolocationTable = functions.https.onRequest(
     async (req, res) => {
@@ -79,7 +137,20 @@ export const getCoordinates = functions.https.onRequest(async (req, res) => {
  */
 async function getAreaList(): Promise<string[]> {
   try {
-    const data = await getJsonArray();
+    const data = await firestoreService.getCollection();
+    const uniqueAreas = [...new Set(data.map((entry) => entry.area))];
+    const uniqueAreaObj = {areas: uniqueAreas};
+    const areaInLowercase = uniqueAreaObj.areas.map(
+        (area:string) => area.toLowerCase());
+    return areaInLowercase;
+  } catch (error) {
+    throw new Error("Error fetching firestore collection list");
+  }
+}
+
+async function getUniqueListOfAreas(): Promise<string[]> {
+  try {
+    const data = await firestoreService.getCollection();
     const uniqueAreas = [...new Set(data.map((entry) => entry.area))];
     const uniqueAreaObj = {areas: uniqueAreas};
     const areaInLowercase = uniqueAreaObj.areas.map(
@@ -92,7 +163,7 @@ async function getAreaList(): Promise<string[]> {
 
 export const closestList = functions.https.onRequest(async (req, res) => {
   try {
-    const data = await getJsonArray();
+    const data = await firestoreService.getCollection();
     const uniqueAreas = [...new Set(data.map((entry) => entry.area))];
     const uniqueAreaObj = {areas: uniqueAreas};
     const areaInLowercase = uniqueAreaObj.areas.map(
@@ -200,27 +271,6 @@ async function fetchSalaahTimings(params: SalaahTimingParams) {
     console.error("Error fetching prayer timings:", error);
   }
 }
-
-exports.readFirestoreCollection =
-functions.https.onRequest(
-    async (req, res) => {
-      try {
-        const collectionName = req.query.collection as string;
-        // Assuming the input is passed in the request body
-
-        // Read the collection from Firestore
-        const collectionRef = admin.firestore().collection(collectionName);
-        const snapshot = await collectionRef.get();
-        const data = snapshot.docs.map((doc) => doc.data());
-        const areas = data.map((entry) => entry.area);
-
-        console.log(areas);
-        res.status(200).json(data);
-      } catch (error) {
-        console.error("Error reading Firestore collection:", error);
-        res.status(500).send("Error reading Firestore collection");
-      }
-    });
 
 export const getSalaahTiming = functions.https.onRequest(
     async (request, response) => {

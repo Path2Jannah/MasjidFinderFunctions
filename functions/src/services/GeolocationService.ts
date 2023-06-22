@@ -16,6 +16,7 @@ export class GeolocationService {
     this.apiKey = apiKey;
     this.client = client;
   }
+  
   /**
  * This function takes in coordiantes and returns an address
  * @param {number} latitude
