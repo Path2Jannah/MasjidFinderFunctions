@@ -36,10 +36,12 @@ export class AxiosService {
   }
 
   private handleResponse(response: AxiosResponse) {
+    console.log("Axios response data: ", response.data);
     return response.data;
   }
 
   private handleError(response: AxiosResponse) {
+    console.log("Axios response error: ", response.data);
     return response.data;
   }
 
