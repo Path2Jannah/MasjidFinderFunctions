@@ -1,3 +1,6 @@
+/* eslint-disable valid-jsdoc */
+/* eslint-disable require-jsdoc */
+
 import * as functions from "firebase-functions";
 import axios from "axios";
 import admin from "firebase-admin";
@@ -5,7 +8,7 @@ import {Client, GeocodeResponse} from "@googlemaps/google-maps-services-js";
 import {GeolocationService} from "./services/GeolocationService";
 import {AreaGeolocation} from "./models/AreaGeolocation";
 import FirestoreService from "./services/FirestoreService";
-import { RealtimeDatabaseService } from "./services/RealtimeDatabaseService";
+import {RealtimeDatabaseService} from "./services/RealtimeDatabaseService";
 import SalaahTimeRequests from "./SalaahTimeRequests";
 
 admin.initializeApp();
@@ -17,11 +20,11 @@ new SalaahTimeRequests();
 const geolocationService =
 new GeolocationService("AIzaSyCgK6O9xJIpjntal0ARJFm9noqxN4wHDXc", googleMaps);
 
-const firestoreService = 
-new FirestoreService(admin, "masjid_cape_town")
+const firestoreService =
+new FirestoreService(admin, "masjid_cape_town");
 
 const realtimeDatabaseService =
-new RealtimeDatabaseService()
+new RealtimeDatabaseService();
 
 export const getNearbyMosques = functions.https.onRequest(async (req, res) => {
   const currentLocation = req.query.currentLocation;
@@ -30,29 +33,30 @@ export const getNearbyMosques = functions.https.onRequest(async (req, res) => {
   res.status(200).send(`Response: ${response.latitude}, ${response.longitude}`);
 });
 
-export const writeLocationGeocodeTableToRealtimeDatabase = functions.https.onRequest(async (req, res) => {
-  const data = await getAreaList()
+export const writeLocationGeocodeTableToRealtimeDatabase =
+functions.https.onRequest(async (req, res) => {
+  const data = await getAreaList();
   const result: { areas: AreaGeolocation[] } = {areas: []};
   await Promise.all(
-    data.map(async (areaLocation) => {
-      try {
-        const geocode = await geolocationService.getCoordinates(areaLocation);
-        const resultObject: AreaGeolocation = {
-          area: areaLocation,
-          lat: geocode.latitude,
-          long: geocode.longitude,
-        };
-        result.areas.push(resultObject);
-      } catch (error) {
-        console.error(error as string);
-        const errorObject: AreaGeolocation = {
-          area: areaLocation,
-          lat: 0,
-          long: 0,
-        };
-        result.areas.push(errorObject);
-      }
-    })
+      data.map(async (areaLocation) => {
+        try {
+          const geocode = await geolocationService.getCoordinates(areaLocation);
+          const resultObject: AreaGeolocation = {
+            area: areaLocation,
+            lat: geocode.latitude,
+            long: geocode.longitude,
+          };
+          result.areas.push(resultObject);
+        } catch (error) {
+          console.error(error as string);
+          const errorObject: AreaGeolocation = {
+            area: areaLocation,
+            lat: 0,
+            long: 0,
+          };
+          result.areas.push(errorObject);
+        }
+      })
   );
   realtimeDatabaseService.setValue("/", result);
   res.status(200).send("Success");
@@ -61,28 +65,28 @@ export const writeLocationGeocodeTableToRealtimeDatabase = functions.https.onReq
 async function AreaGeolocationTable(): Promise<{areas: AreaGeolocation[]}> {
   const areaInLowercase = await getAreaList();
   const resultJson: { areas: AreaGeolocation[] } = {areas: []};
-      await Promise.all(
-          areaInLowercase.map(async (str) => {
-            try {
-              const location = await geolocationService.getCoordinates(str);
-              const areaJson: AreaGeolocation = {
-                area: str,
-                lat: location.latitude,
-                long: location.longitude,
-              };
-              resultJson.areas.push(areaJson);
-            } catch (error) {
-              console.error(error as string);
-              const areaJson: AreaGeolocation = {
-                area: str,
-                lat: 1,
-                long: 1,
-              };
-              resultJson.areas.push(areaJson);
-            }
-          })
-      );
-    return resultJson
+  await Promise.all(
+      areaInLowercase.map(async (str) => {
+        try {
+          const location = await geolocationService.getCoordinates(str);
+          const areaJson: AreaGeolocation = {
+            area: str,
+            lat: location.latitude,
+            long: location.longitude,
+          };
+          resultJson.areas.push(areaJson);
+        } catch (error) {
+          console.error(error as string);
+          const areaJson: AreaGeolocation = {
+            area: str,
+            lat: 1,
+            long: 1,
+          };
+          resultJson.areas.push(areaJson);
+        }
+      })
+  );
+  return resultJson;
 }
 
 export const constructAreaGeolocationTable = functions.https.onRequest(
@@ -197,15 +201,16 @@ export const closestList = functions.https.onRequest(async (req, res) => {
   }
 });
 
-export const SalaahTimesDailyCapeTown = functions.https.onRequest(async (req, res) => {
+export const SalaahTimesDailyCapeTown =
+functions.https.onRequest(async (_req, res) => {
   salaahTimeRequests.getSalaahTimesDailyCapeTown().then((response:any) => {
     console.log(response);
     res.status(200).send(response);
   })
-  .catch((error:any) => {
-    console.log(error);
-    res.status(400).send(error as string);
-  })
+      .catch((error:any) => {
+        console.log(error);
+        res.status(400).send(error as string);
+      });
 });
 
 /**

@@ -1,3 +1,6 @@
+/* eslint-disable valid-jsdoc */
+/* eslint-disable require-jsdoc */
+
 import {Client, GeocodeResponse} from "@googlemaps/google-maps-services-js";
 /**
  * This class is used for geolocation features.
@@ -16,7 +19,7 @@ export class GeolocationService {
     this.apiKey = apiKey;
     this.client = client;
   }
-  
+
   /**
  * This function takes in coordiantes and returns an address
  * @param {number} latitude

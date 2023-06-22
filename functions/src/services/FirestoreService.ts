@@ -1,10 +1,14 @@
-import * as admin from 'firebase-admin';
+/* eslint-disable valid-jsdoc */
+/* eslint-disable require-jsdoc */
+/* eslint-disable max-len */
+
+import * as admin from "firebase-admin";
 
 // Define a FirestoreService class
 export class FirestoreService {
   private collection: FirebaseFirestore.CollectionReference<FirebaseFirestore.DocumentData>;
 
-  constructor(firestore: admin.firestore.Firestore,collectionName: string) {
+  constructor(firestore: admin.firestore.Firestore, collectionName: string) {
     this.collection = firestore.collection(collectionName);
   }
 
