@@ -49,6 +49,8 @@ export class AxiosService {
       url: string,
       config?: AxiosRequestConfig
   ): Promise<T> {
+    console.log("Axios request URL: ", url);
+    console.log("Axios request config:", config);
     const response = await this.axiosInstance.get<T>(url, config);
     return response.data;
   }
