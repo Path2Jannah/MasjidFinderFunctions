@@ -204,12 +204,12 @@ export const closestList = functions.https.onRequest(async (req, res) => {
 
 export const SalaahTimesDailyCapeTown =
 functions.https.onRequest(async (_req, res) => {
-  salaahTimeRequests.getSalaahTimesDailyCapeTown("22-06-23").then((response:any) => {
-    console.log(response);
+  salaahTimeRequests.getSalaahTimesDailyCapeTown("22-06-23").then((response:unknown) => {
+    console.log("Success: ", response);
     res.status(200).send(response);
   })
       .catch((error:any) => {
-        console.log(error);
+        console.log("Fatal error: ", error as string);
         res.status(400).send(error as string);
       });
 });
