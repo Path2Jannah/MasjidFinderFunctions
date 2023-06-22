@@ -10,7 +10,7 @@ export class SalaahTimeRequests {
 
   public async getSalaahTimesDailyCapeTown(date: string): Promise<unknown> {
     return this.axiosService.get(
-        `https://api.aladhan.com/v1/timings/${date}?latitude=-33.9249&longitude=18.4241`
+        `${date}?latitude=-33.9249&longitude=18.4241`
     ).then((response: unknown) => {
       console.log("Retrived response: ", response);
     })

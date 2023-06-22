@@ -18,7 +18,7 @@ export class AxiosService {
 
     this.axiosInstance.interceptors.request.use(
         this.handleRequest,
-        (error: any) => Promise.reject(error)
+        (error) => Promise.reject(error)
     );
 
     this.axiosInstance.interceptors.response.use(
@@ -28,6 +28,7 @@ export class AxiosService {
   }
 
   private handleRequest(config: AxiosRequestConfig) {
+    console.log("Sending out Axois HTTPS request", config.baseURL);
     if (this.apiKey != null) {
       config.headers = config.headers || {};
       config.headers["Authorization"] = `Bearer ${this.apiKey}`;
