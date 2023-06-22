@@ -11,7 +11,6 @@ import {GeolocationService} from "./services/GeolocationService";
 import {FirestoreService} from "./services/FirestoreService";
 // import {RealtimeDatabaseService} from "./services/RealtimeDatabaseService";
 import {SalaahTimeRequests} from "./SalaahTimeRequests";
-import {firestore} from "firebase-admin";
 
 admin.initializeApp();
 const googleMaps = new Client({});
@@ -219,18 +218,18 @@ functions.https.onRequest(async (_req, res) => {
  * Add JDoc
  * @return {Promise<admin.firestore.DocumentData[]>}
  */
-async function getJsonArray(): Promise<admin.firestore.DocumentData[]> {
-  try {
-    // Read the collection from Firestore
-    const collectionRef = admin.firestore().collection("masjid_cape_town");
-    const snapshot = await collectionRef.get();
-    const data = snapshot.docs.map((doc) => doc.data());
-    return data;
-  } catch (error) {
-    console.error("Error reading Firestore collection:", error);
-    throw error;
-  }
-}
+// async function getJsonArray(): Promise<admin.firestore.DocumentData[]> {
+//   try {
+//     // Read the collection from Firestore
+//     const collectionRef = admin.firestore().collection("masjid_cape_town");
+//     const snapshot = await collectionRef.get();
+//     const data = snapshot.docs.map((doc) => doc.data());
+//     return data;
+//   } catch (error) {
+//     console.error("Error reading Firestore collection:", error);
+//     throw error;
+//   }
+// }
 
 // ****** TODO ******
 // Use the function to read the collection

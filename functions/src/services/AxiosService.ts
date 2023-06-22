@@ -29,6 +29,7 @@ export class AxiosService {
 
   private handleRequest(config: AxiosRequestConfig) {
     if (this.apiKey != null) {
+      config.headers = config.headers || {};
       config.headers["Authorization"] = `Bearer ${this.apiKey}`;
     }
     return config;
