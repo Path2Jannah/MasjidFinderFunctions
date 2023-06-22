@@ -11,6 +11,7 @@ import {GeolocationService} from "./services/GeolocationService";
 import {FirestoreService} from "./services/FirestoreService";
 // import {RealtimeDatabaseService} from "./services/RealtimeDatabaseService";
 import {SalaahTimeRequests} from "./SalaahTimeRequests";
+import { SalaahTime } from "./models/SalaahTime";
 
 admin.initializeApp();
 const googleMaps = new Client({});
@@ -204,11 +205,13 @@ export const closestList = functions.https.onRequest(async (req, res) => {
 
 export const SalaahTimesDailyCapeTown =
 functions.https.onRequest(async (_req, res) => {
-  salaahTimeRequests.getSalaahTimesDailyCapeTown("22-06-23").then((response:unknown) => {
-    console.log("Success: ", response);
-    res.status(200).send(response);
-  })
-      .catch((error:any) => {
+  salaahTimeRequests.getSalaahTimesDailyCapeTown("22-06-23").
+      then((response:SalaahTime) => {
+        console.log("Success: ", response);
+        const salaahTimes = response.data.timings;
+        res.status(200).send(salaahTimes);
+      })
+      .catch((error) => {
         console.log("Fatal error: ", error as string);
         res.status(400).send(error as string);
       });
