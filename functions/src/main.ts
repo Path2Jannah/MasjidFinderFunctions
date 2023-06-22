@@ -6,9 +6,13 @@ import {GeolocationService} from "./services/GeolocationService";
 import {AreaGeolocation} from "./models/AreaGeolocation";
 import FirestoreService from "./services/FirestoreService";
 import { RealtimeDatabaseService } from "./services/RealtimeDatabaseService";
+import SalaahTimeRequests from "./SalaahTimeRequests";
 
 admin.initializeApp();
 const googleMaps = new Client({});
+
+const salaahTimeRequests =
+new SalaahTimeRequests();
 
 const geolocationService =
 new GeolocationService("AIzaSyCgK6O9xJIpjntal0ARJFm9noqxN4wHDXc", googleMaps);
@@ -191,6 +195,17 @@ export const closestList = functions.https.onRequest(async (req, res) => {
     console.error("Error reading Firestore collection: ", error);
     res.status(500).send("Error reading Firestore collection");
   }
+});
+
+export const SalaahTimesDailyCapeTown = functions.https.onRequest(async (req, res) => {
+  salaahTimeRequests.getSalaahTimesDailyCapeTown().then((response:any) => {
+    console.log(response);
+    res.status(200).send(response);
+  })
+  .catch((error:any) => {
+    console.log(error);
+    res.status(400).send(error as string);
+  })
 });
 
 /**
