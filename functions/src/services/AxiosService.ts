@@ -32,6 +32,7 @@ export class AxiosService {
       config.headers = config.headers || {};
       config.headers["Authorization"] = `Bearer ${this.apiKey}`;
     }
+    console.log("Full url should be defined as: ", config.baseURL, config.url);
     return config;
   }
 
