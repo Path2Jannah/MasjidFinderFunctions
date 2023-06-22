@@ -43,7 +43,7 @@ export class AxiosService {
   }
 
   private handleError(response: AxiosResponse) {
-    console.log("Axios response error: ", response.data);
+    console.log("Axios response error: ", response);
     return response.data;
   }
 
