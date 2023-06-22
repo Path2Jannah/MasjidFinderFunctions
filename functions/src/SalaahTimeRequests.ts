@@ -1,6 +1,7 @@
 /* eslint-disable valid-jsdoc */
 /* eslint-disable require-jsdoc */
 
+import {AxiosResponse} from "axios";
 import {AxiosService} from "./services/AxiosService";
 /**
  * Class SalaahTimeRequests

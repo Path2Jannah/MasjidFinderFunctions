@@ -47,23 +47,22 @@ export class AxiosService {
     return response.data;
   }
 
-  public async get<T>(
+  public async get(
       url: string,
       config?: AxiosRequestConfig
-  ): Promise<T> {
+  ): Promise<AxiosResponse> {
     console.log("Axios request URL: ", url);
-    console.log("Axios request config:", config);
-    const response = await this.axiosInstance.get<T>(url, config);
-    return response.data;
+    const response = await this.axiosInstance.get(url, config);
+    return response;
   }
 
   public async post<T>(
       url: string,
       data?: any,
       config?: AxiosRequestConfig
-  ): Promise<T> {
+  ): Promise<AxiosResponse> {
     const response = await this.axiosInstance.post<T>(url, data, config);
-    return response.data;
+    return response;
   }
 }
 
