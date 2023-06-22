@@ -47,3 +47,5 @@ export class RealtimeDatabaseService {
     }
   }
 }
+
+export default RealtimeDatabaseService;

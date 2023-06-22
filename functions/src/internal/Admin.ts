@@ -36,3 +36,5 @@ export class Admin {
     return resultJson;
   }
 }
+
+export default Admin;

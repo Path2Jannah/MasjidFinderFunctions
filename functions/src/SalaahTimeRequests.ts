@@ -21,3 +21,5 @@ export class SalaahTimeRequests {
         });
   }
 }
+
+export default AxiosService;

@@ -59,3 +59,5 @@ export class AxiosService {
     return response;
   }
 }
+
+export default AxiosService;
