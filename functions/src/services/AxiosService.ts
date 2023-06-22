@@ -53,7 +53,7 @@ export class AxiosService {
   ): Promise<AxiosResponse> {
     console.log("Axios request URL: ", url);
     const response = await this.axiosInstance.get(url, config);
-    return response;
+    return response.data;
   }
 
   public async post<T>(
