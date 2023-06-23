@@ -6,8 +6,8 @@ import * as admin from "firebase-admin";
 export class RealtimeDatabaseService {
   private database: admin.database.Database;
 
-  constructor() {
-    this.database = admin.database();
+  constructor(database: admin.database.Database) {
+    this.database = database;
   }
 
   public async getValue(path: string): Promise<any> {
