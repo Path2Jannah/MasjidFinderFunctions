@@ -9,7 +9,7 @@ import {Client, GeocodeResponse} from "@googlemaps/google-maps-services-js";
 import {GeolocationService} from "./services/GeolocationService";
 // import {AreaGeolocation} from "./models/AreaGeolocation";
 import {FirestoreService} from "./services/FirestoreService";
-// import {RealtimeDatabaseService} from "./services/RealtimeDatabaseService";
+import {RealtimeDatabaseService} from "./services/RealtimeDatabaseService";
 import {SalaahTimeRequests} from "./SalaahTimeRequests";
 import {SalaahTime} from "./models/SalaahTime";
 
@@ -25,8 +25,8 @@ new GeolocationService("AIzaSyCgK6O9xJIpjntal0ARJFm9noqxN4wHDXc", googleMaps);
 const firestoreService =
 new FirestoreService(new admin.firestore.Firestore, "masjid_cape_town");
 
-// const realtimeDatabaseService =
-// new RealtimeDatabaseService();
+const realtimeDatabaseService =
+new RealtimeDatabaseService();
 
 export const getNearbyMosques = functions.https.onRequest(async (req, res) => {
   const currentLocation = req.query.currentLocation;
@@ -209,6 +209,8 @@ functions.https.onRequest(async (_req, res) => {
       then((response:SalaahTime) => {
         console.log("Success: ", response);
         const salaahTimes = response.data.timings;
+        const realtimeDatabaseResponse = realtimeDatabaseService.setValue("/CapeTown/Daily", salaahTimes);
+        console.log("Response from realtime database", realtimeDatabaseResponse);
         res.status(200).send(salaahTimes);
       })
       .catch((error) => {
