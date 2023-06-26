@@ -211,7 +211,7 @@ functions.https.onRequest(async (_req, res) => {
       then(async (response:SalaahTime) => {
         console.log("Success: ", response);
         const salaahTimes = response.data.timings;
-        if (await realtimeDatabaseService.isPathPopulated) {
+        if (await realtimeDatabaseService.isPathPopulated("/CapeTown/Daily")) {
           realtimeDatabaseService.updateValue("/CapeTown/Daily", salaahTimes);
           res.status(200).send("Value updated in realtime database" + salaahTimes);
         } else {
