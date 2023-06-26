@@ -46,6 +46,11 @@ export class RealtimeDatabaseService {
       throw error;
     }
   }
+
+  public async isPathPopulated(path: string): Promise<boolean> {
+    const snapshot = await this.database.ref(path).once("value");
+    return snapshot.exists() && (snapshot.val() != null);
+  }
 }
 
 export default RealtimeDatabaseService;
