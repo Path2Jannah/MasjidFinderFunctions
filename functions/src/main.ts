@@ -13,6 +13,7 @@ import {RealtimeDatabaseService} from "./services/RealtimeDatabaseService";
 import {SalaahTimeRequests} from "./SalaahTimeRequests";
 import {SalaahTime} from "./models/SalaahTime";
 import {PredefinedLocations} from "./models/PredefinedLocations";
+import moment from "moment-timezone";
 
 admin.initializeApp();
 const googleMaps = new Client({});
@@ -213,7 +214,7 @@ functions.https.onRequest(async (_req, res) => {
         const salaahTimes = response.data.timings;
         if (await realtimeDatabaseService.isPathPopulated("/CapeTown/Daily")) {
           realtimeDatabaseService.updateValue("/CapeTown/Daily", salaahTimes);
-          res.status(200).send("Value updated in realtime database" + salaahTimes);
+          res.status(200).send("Value updated in realtime database" + salaahTimes + getDate());
         } else {
           realtimeDatabaseService.setValue("/CapeTown/Daily", salaahTimes);
           res.status(200).send("Value added in realtime database" + salaahTimes);
@@ -302,6 +303,12 @@ async function fetchSalaahTimings(params: SalaahTimingParams) {
     // Handle error
     console.error("Error fetching prayer timings:", error);
   }
+}
+
+function getDate(): string {
+  const timezone = "GMT+2";
+  const locale = "en-ZA";
+  return moment().tz(timezone).locale(locale).format("DD-MM-YY");
 }
 
 export const getSalaahTiming = functions.https.onRequest(
