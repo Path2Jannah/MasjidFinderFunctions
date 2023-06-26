@@ -208,12 +208,16 @@ export const closestList = functions.https.onRequest(async (req, res) => {
 export const SalaahTimesDailyCapeTown =
 functions.https.onRequest(async (_req, res) => {
   salaahTimeRequests.getSalaahTimesDaily("22-06-23", PredefinedLocations.CAPE_TOWN).
-      then((response:SalaahTime) => {
+      then(async (response:SalaahTime) => {
         console.log("Success: ", response);
         const salaahTimes = response.data.timings;
-        const realtimeDatabaseResponse = realtimeDatabaseService.setValue("/CapeTown/Daily", salaahTimes);
-        console.log("Response from realtime database", realtimeDatabaseResponse);
-        res.status(200).send(salaahTimes);
+        if (await realtimeDatabaseService.isPathPopulated) {
+          realtimeDatabaseService.updateValue("/CapeTown/Daily", salaahTimes);
+          res.status(200).send("Value updated in realtime database" + salaahTimes);
+        } else {
+          realtimeDatabaseService.setValue("/CapeTown/Daily", salaahTimes);
+          res.status(200).send("Value added in realtime database" + salaahTimes);
+        }
       })
       .catch((error) => {
         console.log("Fatal error: ", error as string);
