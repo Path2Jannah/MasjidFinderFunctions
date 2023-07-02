@@ -208,7 +208,7 @@ export const closestList = functions.https.onRequest(async (req, res) => {
 
 export const SalaahTimesDailyCapeTown =
 functions.https.onRequest(async (_req, res) => {
-  salaahTimeRequests.getSalaahTimesDaily("22-06-23", PredefinedLocations.CAPE_TOWN).
+  salaahTimeRequests.getSalaahTimesDaily(getDate(), PredefinedLocations.CAPE_TOWN).
       then(async (response:SalaahTime) => {
         console.log("Success: ", response);
         const salaahTimes = response.data.timings;
