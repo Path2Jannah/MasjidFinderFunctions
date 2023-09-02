@@ -14,10 +14,13 @@ import {SalaahTimeRequests} from "./SalaahTimeRequests";
 import {SalaahTime} from "./models/SalaahTime";
 import {PredefinedLocations} from "./models/PredefinedLocations";
 import moment from "moment-timezone";
+import { user } from "firebase-functions/v1/auth";
+import { DocumentBuilder } from "firebase-functions/v1/firestore";
 
 admin.initializeApp();
 const googleMaps = new Client({});
 const realtimeDatabase = admin.database();
+const firestoreDatabase = new admin.firestore.Firestore();
 
 const salaahTimeRequests =
 new SalaahTimeRequests();
@@ -26,7 +29,7 @@ const geolocationService =
 new GeolocationService("AIzaSyCgK6O9xJIpjntal0ARJFm9noqxN4wHDXc", googleMaps);
 
 const firestoreService =
-new FirestoreService(new admin.firestore.Firestore, "masjid_cape_town");
+new FirestoreService(firestoreDatabase, "masjid_cape_town");
 
 const realtimeDatabaseService =
 new RealtimeDatabaseService(realtimeDatabase);
@@ -36,6 +39,59 @@ export const getNearbyMosques = functions.https.onRequest(async (req, res) => {
   const response = await geolocationService.getCoordinates(
     currentLocation as string);
   res.status(200).send(`Response: ${response.latitude}, ${response.longitude}`);
+});
+
+export const updateStatusToday = functions.https.onRequest(async (req, res) => {
+  const currentDate = getDate();
+  const userId = req.body.userId;
+
+  if (userId != null) {
+    const userFolder = new FirestoreService(firestoreDatabase, userId);
+
+    const data = {
+      date: currentDate,
+      fajr: req.body.fajr,
+      thur: req.body.thur,
+      asr: req.body.asr,
+      magrieb: req.body.magrieb,
+      isha: req.body.isha,
+    };
+
+    userFolder.addDocument(
+        data
+    ).
+        then(async (response:string) => {
+          res.status(200).send(response);
+        });
+  }
+});
+
+export const SalaahTimesDailyCapeTown =
+functions.https.onRequest(async (_req, res) => {
+  const currentDate = getDate();
+  const timesPath = "/CapeTown/Daily/Times";
+  const datePath = "/CapeTown/Daily/Dates";
+  salaahTimeRequests.getSalaahTimesDaily(currentDate, PredefinedLocations.CAPE_TOWN).
+      then(async (response:SalaahTime) => {
+        console.log("Success: ", response);
+        const salaahTimes = response.data.timings;
+        const dates = response.data.date;
+        if (await realtimeDatabaseService.isPathPopulated(timesPath) && await realtimeDatabaseService.isPathPopulated(datePath)) {
+          console.info("Data found in database... updating");
+          realtimeDatabaseService.updateValue(timesPath, salaahTimes);
+          realtimeDatabaseService.updateValue(datePath, dates);
+          res.status(200).send(salaahTimes);
+        } else {
+          console.info("Data found in database... adding");
+          realtimeDatabaseService.setValue(timesPath, salaahTimes);
+          realtimeDatabaseService.setValue(datePath, dates);
+          res.status(200).send(salaahTimes);
+        }
+      })
+      .catch((error) => {
+        console.log("Fatal error: ", error as string);
+        res.status(400).send(error as string);
+      });
 });
 
 // export const writeLocationGeocodeTableToRealtimeDatabase =
@@ -204,34 +260,6 @@ export const closestList = functions.https.onRequest(async (req, res) => {
     console.error("Error reading Firestore collection: ", error);
     res.status(500).send("Error reading Firestore collection");
   }
-});
-
-export const SalaahTimesDailyCapeTown =
-functions.https.onRequest(async (_req, res) => {
-  const currentDate = getDate();
-  const timesPath = "/CapeTown/Daily/Times";
-  const datePath = "/CapeTown/Daily/Dates";
-  salaahTimeRequests.getSalaahTimesDaily(currentDate, PredefinedLocations.CAPE_TOWN).
-      then(async (response:SalaahTime) => {
-        console.log("Success: ", response);
-        const salaahTimes = response.data.timings;
-        const dates = response.data.date;
-        if (await realtimeDatabaseService.isPathPopulated(timesPath) && await realtimeDatabaseService.isPathPopulated(datePath)) {
-          console.info("Data found in database... updating");
-          realtimeDatabaseService.updateValue(timesPath, salaahTimes);
-          realtimeDatabaseService.updateValue(datePath, dates);
-          res.status(200).send(salaahTimes);
-        } else {
-          console.info("Data found in database... adding");
-          realtimeDatabaseService.setValue(timesPath, salaahTimes);
-          realtimeDatabaseService.setValue(datePath, dates);
-          res.status(200).send(salaahTimes);
-        }
-      })
-      .catch((error) => {
-        console.log("Fatal error: ", error as string);
-        res.status(400).send(error as string);
-      });
 });
 
 /**

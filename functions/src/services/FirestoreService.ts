@@ -6,9 +6,11 @@ import * as admin from "firebase-admin";
 
 // Define a FirestoreService class
 export class FirestoreService {
+  private firestore : admin.firestore.Firestore;
   private collection: FirebaseFirestore.CollectionReference<FirebaseFirestore.DocumentData>;
 
   constructor(firestore: admin.firestore.Firestore, collectionName: string) {
+    this.firestore = firestore;
     this.collection = firestore.collection(collectionName);
   }
 
