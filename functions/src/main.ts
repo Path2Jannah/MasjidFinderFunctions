@@ -14,8 +14,6 @@ import {SalaahTimeRequests} from "./SalaahTimeRequests";
 import {SalaahTime} from "./models/SalaahTime";
 import {PredefinedLocations} from "./models/PredefinedLocations";
 import moment from "moment-timezone";
-import { user } from "firebase-functions/v1/auth";
-import { DocumentBuilder } from "firebase-functions/v1/firestore";
 
 admin.initializeApp();
 const googleMaps = new Client({});
