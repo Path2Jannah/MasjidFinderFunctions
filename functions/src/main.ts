@@ -13,12 +13,14 @@ import {RealtimeDatabaseService} from "./services/RealtimeDatabaseService";
 import {SalaahTimeRequests} from "./SalaahTimeRequests";
 import {SalaahTime} from "./models/SalaahTime";
 import {PredefinedLocations} from "./models/PredefinedLocations";
-import moment from "moment-timezone";
+import {DateTimeHelper} from "./helper/DateTimeHelper";
+import {DateFormat, Locale, Timezone} from "./helper/DateEnums";
 
 admin.initializeApp();
 const googleMaps = new Client({});
 const realtimeDatabase = admin.database();
 const firestoreDatabase = new admin.firestore.Firestore();
+const dateTimeHelper = new DateTimeHelper();
 
 const salaahTimeRequests =
 new SalaahTimeRequests();
@@ -40,7 +42,7 @@ export const getNearbyMosques = functions.https.onRequest(async (req, res) => {
 });
 
 export const updateStatusToday = functions.https.onRequest(async (req, res) => {
-  const currentDate = getDate();
+  const currentDate = dateTimeHelper.getDate(Locale.SOUTH_AFRICA, Timezone.GMT_PLUS_2, DateFormat.API_DATE);
   const userId = req.body.userId;
 
   if (userId != null) {
@@ -66,8 +68,7 @@ export const updateStatusToday = functions.https.onRequest(async (req, res) => {
 
 export const SalaahTimesDailyCapeTown =
 functions.https.onRequest(async (_req, res) => {
-  const currentDate = getDate();
-  console.log("Date: ", currentDate);
+  const currentDate = dateTimeHelper.getDate(Locale.SOUTH_AFRICA, Timezone.GMT_PLUS_2, DateFormat.API_DATE);
   const timesPath = "/CapeTown/Daily/Times";
   const datePath = "/CapeTown/Daily/Dates";
   salaahTimeRequests.getSalaahTimesDaily(currentDate, PredefinedLocations.CAPE_TOWN).
@@ -338,12 +339,6 @@ async function fetchSalaahTimings(params: SalaahTimingParams) {
     // Handle error
     console.error("Error fetching prayer timings:", error);
   }
-}
-
-function getDate(): string {
-  const timezone = "GMT+2";
-  const locale = "en-ZA";
-  return moment().tz(timezone).locale(locale).format("DD-MM-YYYY");
 }
 
 export const getSalaahTiming = functions.https.onRequest(
