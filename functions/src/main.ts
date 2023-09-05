@@ -67,6 +67,7 @@ export const updateStatusToday = functions.https.onRequest(async (req, res) => {
 export const SalaahTimesDailyCapeTown =
 functions.https.onRequest(async (_req, res) => {
   const currentDate = getDate();
+  console.log("Date: ", currentDate);
   const timesPath = "/CapeTown/Daily/Times";
   const datePath = "/CapeTown/Daily/Dates";
   salaahTimeRequests.getSalaahTimesDaily(currentDate, PredefinedLocations.CAPE_TOWN).
