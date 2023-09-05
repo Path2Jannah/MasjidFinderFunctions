@@ -343,7 +343,7 @@ async function fetchSalaahTimings(params: SalaahTimingParams) {
 function getDate(): string {
   const timezone = "GMT+2";
   const locale = "en-ZA";
-  return moment().tz(timezone).locale(locale).format("DD-MM-YY");
+  return moment().tz(timezone).locale(locale).format("DD-MM-YYYY");
 }
 
 export const getSalaahTiming = functions.https.onRequest(
