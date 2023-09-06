@@ -23,3 +23,5 @@ export class DateTimeHelper {
     return moment().tz(timezone).locale(locale).format(format);
   }
 }
+
+export default DateTimeHelper;
