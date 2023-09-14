@@ -75,7 +75,7 @@ export const CreateNewUserNode = functions.auth.user().onCreate(async (user: adm
     uid: uid,
     email: email,
     displayName: displayName,
-    salaahHistory: [],
+    salaahHistory: {},
   };
 
   await userdB.addDocumentWithID(data.uid, data);
@@ -104,11 +104,11 @@ functions.https.onRequest(async (req, res) => {
   const userUID: string = req.body.uid as string;
   try {
     await userdB.getDocumentById(userUID);
-    await userdB.updateDocument(userUID, {salaahHistory: req.body.salaahStatus});
-    res.send(200);
   } catch {
     res.send(400).json({error: "No user found."});
   }
+  await userdB.updateDocument(userUID, {salaahHistory: req.body.salaahStatus});
+  res.send(200);
 });
 
 // export const writeLocationGeocodeTableToRealtimeDatabase =
