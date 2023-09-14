@@ -95,11 +95,12 @@ functions.https.onRequest(async (req, res) => {
       await userdB.getDocumentById(req.body.userID);
       console.log("Found");
     } catch {
+      console.log("Erro finding user");
       res.send(400).json({error: "No user found."});
     }
     await userdB.updateDocument(req.body.userID, {salaahHistory: req.body.salaahHistory});
     console.log("Update complete");
-    res.send(200);
+    res.send(200).json({success: "Complete"});
   } else {
     console.log("Malformed request");
     res.send(400).json({error: "Malformed request"});
