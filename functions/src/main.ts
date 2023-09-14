@@ -15,7 +15,7 @@ import {SalaahTime} from "./models/SalaahTime";
 import {PredefinedLocations} from "./models/PredefinedLocations";
 import {DateTimeHelper} from "./helper/DateTimeHelper";
 import {Format, Locale, Timezone} from "./helper/DateEnums";
-import {UpdateDailySalaahHistoryBody} from "./models/UpdateSalaahStatusBody";
+import {UpdateSalaahStatusBody} from "./models/UpdateSalaahStatusBody";
 
 admin.initializeApp();
 // const googleMaps = new Client();
@@ -89,13 +89,16 @@ export const DeleteUserNode = functions.auth.user().onDelete(async (user: admin.
 
 export const UpdateDailySalaahHistory =
 functions.https.onRequest(async (req, res) => {
-  if (req.body as UpdateDailySalaahHistoryBody) {
+  if (req.body as UpdateSalaahStatusBody) {
+    console.log("Input body valid");
     try {
       await userdB.getDocumentById(req.body.userID);
+      console.log("Found");
     } catch {
       res.send(400).json({error: "No user found."});
     }
     await userdB.updateDocument(req.body.userID, {salaahHistory: req.body.salaahHistory});
+    console.log("Update complete");
     res.send(200);
   } else {
     res.send(400).json({error: "Malformed request"});
