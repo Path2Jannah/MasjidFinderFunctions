@@ -1,4 +1,4 @@
-interface SalaahHistory {
+interface SalaahStatus {
     date: string,
     fajr: boolean,
     thur: boolean,
@@ -7,7 +7,11 @@ interface SalaahHistory {
     isha: boolean,
 }
 
+interface UserSalaahStatus {
+    [date: string]: SalaahStatus
+}
+
 export interface UpdateDailySalaahHistoryBody {
     userID: string,
-    salaahHistory: SalaahHistory,
+    salaahHistory: UserSalaahStatus,
 }

@@ -15,7 +15,7 @@ import {SalaahTime} from "./models/SalaahTime";
 import {PredefinedLocations} from "./models/PredefinedLocations";
 import {DateTimeHelper} from "./helper/DateTimeHelper";
 import {Format, Locale, Timezone} from "./helper/DateEnums";
-import {UpdateDailySalaahHistoryBody} from "./models/UpdateSalaahHistoryBody";
+import {UpdateDailySalaahHistoryBody} from "./models/UpdateSalaahStatusBody";
 
 admin.initializeApp();
 // const googleMaps = new Client();
