@@ -15,6 +15,7 @@ import {SalaahTime} from "./models/SalaahTime";
 import {PredefinedLocations} from "./models/PredefinedLocations";
 import {DateTimeHelper} from "./helper/DateTimeHelper";
 import {Format, Locale, Timezone} from "./helper/DateEnums";
+import {UpdateDailySalaahHistoryBody} from "./models/UpdateSalaahHistoryBody";
 
 admin.initializeApp();
 // const googleMaps = new Client();
@@ -88,24 +89,17 @@ export const DeleteUserNode = functions.auth.user().onDelete(async (user: admin.
 
 export const UpdateDailySalaahHistory =
 functions.https.onRequest(async (req, res) => {
-  if (!req.body.uid) {
-    res.status(400).json({error: "No user specified."});
-    return;
+  if (req.body as UpdateDailySalaahHistoryBody) {
+    try {
+      await userdB.getDocumentById(req.body.userID);
+    } catch {
+      res.send(400).json({error: "No user found."});
+    }
+    await userdB.updateDocument(req.body.userID, {salaahHistory: req.body.salaahHistory});
+    res.send(200);
+  } else {
+    res.send(400).json({error: "Malformed request"});
   }
-  if (!req.body.salaahStatus) {
-    res.send(400).json({error: "No data provided"});
-  }
-  if (typeof req.body.uid != "string") {
-    res.send(400).json({error: "Malformed userID"});
-  }
-  const userUID: string = req.body.uid as string;
-  try {
-    await userdB.getDocumentById(userUID);
-  } catch {
-    res.send(400).json({error: "No user found."});
-  }
-  await userdB.updateDocument(userUID, {salaahHistory: req.body.salaahStatus});
-  res.send(200);
 });
 
 // export const writeLocationGeocodeTableToRealtimeDatabase =
