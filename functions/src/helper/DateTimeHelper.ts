@@ -1,4 +1,4 @@
-import {DateFormat, Locale, Timezone} from "./DateEnums";
+import {Format, Locale, Timezone} from "./DateEnums";
 import moment from "moment-timezone";
 
 /**
@@ -11,14 +11,14 @@ export class DateTimeHelper {
      * @param {Locale} locale - The specific locale we want to generate with.
      * @param {Timezone} timezone -
      * The specific timezone we want to generate with.
-     * @param {DateFormat} format -
+     * @param {Format} format -
      * The specific format we want to generate with.
      * @return {string} The current date.
      */
   public getDate(
       locale:Locale,
       timezone:Timezone,
-      format:DateFormat
+      format:Format
   ): string {
     return moment().tz(timezone).locale(locale).format(format);
   }

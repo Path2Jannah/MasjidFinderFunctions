@@ -1,4 +1,4 @@
-export enum DateFormat {
+export enum Format {
     API_DATE = "DD-MM-YYYY",
 }
 

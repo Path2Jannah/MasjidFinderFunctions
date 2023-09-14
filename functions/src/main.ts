@@ -3,10 +3,10 @@
 /* eslint-disable max-len */
 
 import * as functions from "firebase-functions";
-import axios from "axios";
+// import axios from "axios";
 import * as admin from "firebase-admin";
-import {Client, GeocodeResponse} from "@googlemaps/google-maps-services-js";
-import {GeolocationService} from "./services/GeolocationService";
+// import {Client, GeocodeResponse} from "@googlemaps/google-maps-services-js";
+// import {GeolocationService} from "./services/GeolocationService";
 // import {AreaGeolocation} from "./models/AreaGeolocation";
 import {FirestoreService} from "./services/FirestoreService";
 import {RealtimeDatabaseService} from "./services/RealtimeDatabaseService";
@@ -14,10 +14,10 @@ import {SalaahTimeRequests} from "./SalaahTimeRequests";
 import {SalaahTime} from "./models/SalaahTime";
 import {PredefinedLocations} from "./models/PredefinedLocations";
 import {DateTimeHelper} from "./helper/DateTimeHelper";
-import {DateFormat, Locale, Timezone} from "./helper/DateEnums";
+import {Format, Locale, Timezone} from "./helper/DateEnums";
 
 admin.initializeApp();
-const googleMaps = new Client();
+// const googleMaps = new Client();
 const realtimeDatabase = admin.database();
 const firestoreDatabase = new admin.firestore.Firestore();
 const dateTimeHelper = new DateTimeHelper();
@@ -25,11 +25,11 @@ const dateTimeHelper = new DateTimeHelper();
 const salaahTimeRequests =
 new SalaahTimeRequests();
 
-const geolocationService =
-new GeolocationService("AIzaSyCgK6O9xJIpjntal0ARJFm9noqxN4wHDXc", googleMaps);
+// const geolocationService =
+// new GeolocationService("AIzaSyCgK6O9xJIpjntal0ARJFm9noqxN4wHDXc", googleMaps);
 
-const firestoreService =
-new FirestoreService(firestoreDatabase, "masjid_cape_town");
+// const firestoreService =
+// new FirestoreService(firestoreDatabase, "masjid_cape_town");
 
 const userdB =
 new FirestoreService(firestoreDatabase, "user_registry");
@@ -37,16 +37,13 @@ new FirestoreService(firestoreDatabase, "user_registry");
 const realtimeDatabaseService =
 new RealtimeDatabaseService(realtimeDatabase);
 
-export const getNearbyMosques = functions.https.onRequest(async (req, res) => {
-  const currentLocation = req.query.currentLocation;
-  const response = await geolocationService.getCoordinates(
-    currentLocation as string);
-  res.status(200).send(`Response: ${response.latitude}, ${response.longitude}`);
-});
-
+/**
+ * Pulls in the Salaah times from the external API.
+ * Then populates the Realtime database with the response from the external API.
+ */
 export const SalaahTimesDailyCapeTown =
 functions.https.onRequest(async (_req, res) => {
-  const currentDate = dateTimeHelper.getDate(Locale.SOUTH_AFRICA, Timezone.GMT_PLUS_2, DateFormat.API_DATE);
+  const currentDate = dateTimeHelper.getDate(Locale.SOUTH_AFRICA, Timezone.GMT_PLUS_2, Format.API_DATE);
   const timesPath = "/CapeTown/Daily/Times";
   const datePath = "/CapeTown/Daily/Dates";
   salaahTimeRequests.getSalaahTimesDaily(currentDate, PredefinedLocations.CAPE_TOWN).
@@ -195,32 +192,32 @@ functions.https.onRequest(async (req, res) => {
 //       res.json(resultJson);
 //     });
 
-export const getCoordinates = functions.https.onRequest(async (req, res) => {
-  const address = req.query.address;
+// export const getCoordinates = functions.https.onRequest(async (req, res) => {
+//   const address = req.query.address;
 
-  try {
-    const response: GeocodeResponse = await googleMaps.geocode({
-      params: {
-        address: address as string,
-        key: "AIzaSyCgK6O9xJIpjntal0ARJFm9noqxN4wHDXc",
-      },
-    });
+//   try {
+//     const response: GeocodeResponse = await googleMaps.geocode({
+//       params: {
+//         address: address as string,
+//         key: "AIzaSyCgK6O9xJIpjntal0ARJFm9noqxN4wHDXc",
+//       },
+//     });
 
-    console.log("Response:", response);
+//     console.log("Response:", response);
 
-    const {lat, lng} = response.data.results[0].geometry.location;
+//     const {lat, lng} = response.data.results[0].geometry.location;
 
-    res.send({lat, lng});
-  } catch (error) {
-    console.error("Error:", error);
-    res.status(500).send("An error occurred");
-  }
-});
+//     res.send({lat, lng});
+//   } catch (error) {
+//     console.error("Error:", error);
+//     res.status(500).send("An error occurred");
+//   }
+// });
 
-/**
- *
- * @return {Promise<string[]>}
- */
+// /**
+//  *
+//  * @return {Promise<string[]>}
+//  */
 // async function getAreaList(): Promise<string[]> {
 //   try {
 //     const data = await firestoreService.getCollection();
@@ -247,42 +244,42 @@ export const getCoordinates = functions.https.onRequest(async (req, res) => {
 //   }
 // }
 
-export const closestList = functions.https.onRequest(async (req, res) => {
-  try {
-    const data = await firestoreService.getCollection();
-    const uniqueAreas = [...new Set(data.map((entry) => entry.area))];
-    const uniqueAreaObj = {areas: uniqueAreas};
-    const areaInLowercase = uniqueAreaObj.areas.map(
-        (area:string) => area.toLowerCase());
-    const resultJson: any = {};
-    for (const entries of areaInLowercase) {
-      console.log(entries);
-      const response = await googleMaps.geocode({
-        params: {
-          address: entries,
-          key: "AIzaSyCgK6O9xJIpjntal0ARJFm9noqxN4wHDXc",
-        },
-      });
-      console.log(response.data.results[0].geometry.location);
-      const {lat, lng} = response.data.results[0].geometry.location;
-      const areaData = {
-        area: entries,
-        lat: lat,
-        lng: lng,
-      };
-      resultJson[entries] = areaData;
-    }
-    res.status(200).json(resultJson);
-  } catch (error) {
-    console.error("Error reading Firestore collection: ", error);
-    res.status(500).send("Error reading Firestore collection");
-  }
-});
+// export const closestList = functions.https.onRequest(async (req, res) => {
+//   try {
+//     const data = await firestoreService.getCollection();
+//     const uniqueAreas = [...new Set(data.map((entry) => entry.area))];
+//     const uniqueAreaObj = {areas: uniqueAreas};
+//     const areaInLowercase = uniqueAreaObj.areas.map(
+//         (area:string) => area.toLowerCase());
+//     const resultJson: any = {};
+//     for (const entries of areaInLowercase) {
+//       console.log(entries);
+//       const response = await googleMaps.geocode({
+//         params: {
+//           address: entries,
+//           key: "AIzaSyCgK6O9xJIpjntal0ARJFm9noqxN4wHDXc",
+//         },
+//       });
+//       console.log(response.data.results[0].geometry.location);
+//       const {lat, lng} = response.data.results[0].geometry.location;
+//       const areaData = {
+//         area: entries,
+//         lat: lat,
+//         lng: lng,
+//       };
+//       resultJson[entries] = areaData;
+//     }
+//     res.status(200).json(resultJson);
+//   } catch (error) {
+//     console.error("Error reading Firestore collection: ", error);
+//     res.status(500).send("Error reading Firestore collection");
+//   }
+// });
 
-/**
- * Add JDoc
- * @return {Promise<admin.firestore.DocumentData[]>}
- */
+// /**
+//  * Add JDoc
+//  * @return {Promise<admin.firestore.DocumentData[]>}
+//  */
 // async function getJsonArray(): Promise<admin.firestore.DocumentData[]> {
 //   try {
 //     // Read the collection from Firestore
@@ -308,73 +305,80 @@ export const closestList = functions.https.onRequest(async (req, res) => {
 // masjids in the users area from the JSON array
 // Determine the order of the location.
 
-export const getAddress = functions.https.onRequest(async (req, res) => {
-  const placeName = req.query.place as string;
+// export const getAddress = functions.https.onRequest(async (req, res) => {
+//   const placeName = req.query.place as string;
 
-  try {
-    // Use the Geocoding API to get the address of the place
-    const response: GeocodeResponse = await googleMaps.geocode({
-      params: {
-        address: placeName,
-        key: "AIzaSyCgK6O9xJIpjntal0ARJFm9noqxN4wHDXc",
-      },
-    });
+//   try {
+//     // Use the Geocoding API to get the address of the place
+//     const response: GeocodeResponse = await googleMaps.geocode({
+//       params: {
+//         address: placeName,
+//         key: "AIzaSyCgK6O9xJIpjntal0ARJFm9noqxN4wHDXc",
+//       },
+//     });
 
-    // Extract the formatted address from the response
-    const address = response.data.results[0].formatted_address;
+//     // Extract the formatted address from the response
+//     const address = response.data.results[0].formatted_address;
 
-    res.send({address});
-  } catch (error) {
-    console.error("Error:", error);
-    res.status(500).send("An error occurred");
-  }
-});
+//     res.send({address});
+//   } catch (error) {
+//     console.error("Error:", error);
+//     res.status(500).send("An error occurred");
+//   }
+// });
 
-interface SalaahTimingParams {
-  date: string;
-  latitude: number;
-  longitude: number;
-  method: number;
-}
-/**
- * AddJdoc
- * @param {SalaahTimingParams} params
- */
-async function fetchSalaahTimings(params: SalaahTimingParams) {
-  try {
-    const {date, latitude, longitude, method} = params;
-    const response = await axios.get(`http://api.aladhan.com/v1/timings/${date}`, {
-      params: {
-        latitude,
-        longitude,
-        method,
-      },
-    });
-    const salaahTimings = response.data.data.timings;
-    console.log(salaahTimings);
-  } catch (error) {
-    // Handle error
-    console.error("Error fetching prayer timings:", error);
-  }
-}
+// interface SalaahTimingParams {
+//   date: string;
+//   latitude: number;
+//   longitude: number;
+//   method: number;
+// }
+// /**
+//  * AddJdoc
+//  * @param {SalaahTimingParams} params
+//  */
+// async function fetchSalaahTimings(params: SalaahTimingParams) {
+//   try {
+//     const {date, latitude, longitude, method} = params;
+//     const response = await axios.get(`http://api.aladhan.com/v1/timings/${date}`, {
+//       params: {
+//         latitude,
+//         longitude,
+//         method,
+//       },
+//     });
+//     const salaahTimings = response.data.data.timings;
+//     console.log(salaahTimings);
+//   } catch (error) {
+//     // Handle error
+//     console.error("Error fetching prayer timings:", error);
+//   }
+// }
 
-export const getSalaahTiming = functions.https.onRequest(
-    async (request, response) => {
-      try {
-        const params: SalaahTimingParams = {
-          date: request.query.date as string,
-          latitude: parseFloat(request.query.latitude as string),
-          longitude: parseFloat(request.query.longitude as string),
-          method: parseInt(request.query.method as string, 3),
-        };
+// export const getSalaahTiming = functions.https.onRequest(
+//     async (request, response) => {
+//       try {
+//         const params: SalaahTimingParams = {
+//           date: request.query.date as string,
+//           latitude: parseFloat(request.query.latitude as string),
+//           longitude: parseFloat(request.query.longitude as string),
+//           method: parseInt(request.query.method as string, 3),
+//         };
 
-        const salaahTimings = await fetchSalaahTimings(params);
+//         const salaahTimings = await fetchSalaahTimings(params);
 
-        response.json(salaahTimings);
-      } catch (error) {
-        console.error("Error fetching prayer timings:", error);
-        response.status(500).send(
-            "An error occurred while fetching prayer timings."
-        );
-      }
-    });
+//         response.json(salaahTimings);
+//       } catch (error) {
+//         console.error("Error fetching prayer timings:", error);
+//         response.status(500).send(
+//             "An error occurred while fetching prayer timings."
+//         );
+//       }
+//     });
+
+// export const getNearbyMosques = functions.https.onRequest(async (req, res) => {
+//   const currentLocation = req.query.currentLocation;
+//   const response = await geolocationService.getCoordinates(
+//     currentLocation as string);
+//   res.status(200).send(`Response: ${response.latitude}, ${response.longitude}`);
+// });
