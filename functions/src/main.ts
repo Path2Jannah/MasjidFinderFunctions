@@ -101,6 +101,7 @@ functions.https.onRequest(async (req, res) => {
     console.log("Update complete");
     res.send(200);
   } else {
+    console.log("Malformed request");
     res.send(400).json({error: "Malformed request"});
   }
 });

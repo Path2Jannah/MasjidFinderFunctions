@@ -11,7 +11,7 @@ interface UserSalaahStatus {
     [date: string]: SalaahStatus
 }
 
-export interface UpdateDailySalaahHistoryBody {
+export interface UpdateSalaahStatusBody {
     userID: string,
     salaahHistory: UserSalaahStatus,
 }
