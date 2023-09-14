@@ -87,6 +87,7 @@ export const DeleteUserNode = functions.auth.user().onDelete(async (user: admin.
   await userdB.deleteDocument(user.uid);
 });
 
+// TODO: Bug here where the interface isn't able to match up to the the firestore database object.
 export const UpdateDailySalaahHistory =
 functions.https.onRequest(async (req, res) => {
   if (req.body as UpdateSalaahStatusBody) {
