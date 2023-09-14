@@ -72,7 +72,7 @@ functions.https.onRequest(async (_req, res) => {
       });
 });
 
-export const CreateNewUserNode = functions.auth.user().onCreate((user: admin.auth.UserRecord) => {
+export const CreateNewUserNode = functions.auth.user().onCreate(async (user: admin.auth.UserRecord) => {
   const {uid, email, displayName} = user;
   const data = {
     uid: uid,
@@ -80,7 +80,7 @@ export const CreateNewUserNode = functions.auth.user().onCreate((user: admin.aut
     displayName: displayName,
   };
 
-  userdB.addDocument(data);
+  await userdB.addDocument(data);
 });
 
 // export const writeLocationGeocodeTableToRealtimeDatabase =
