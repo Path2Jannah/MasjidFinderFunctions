@@ -18,6 +18,15 @@ export class FirestoreService {
     return docRef.id;
   }
 
+  public async addDocumentWithID(documentId: String, document: FirebaseFirestore.DocumentData): Promise<string> {
+    const docRef = await this.collection.doc(documentId);;
+    docRef.set(document).then(() => {
+      console.log("Success")
+    }).catch(() => {
+      console.error("Failed")
+    })
+  }
+
   // Get a document by its ID
   public async getDocumentById(documentId: string): Promise<FirebaseFirestore.DocumentData | null> {
     const documentSnapshot = await this.collection.doc(documentId).get();
