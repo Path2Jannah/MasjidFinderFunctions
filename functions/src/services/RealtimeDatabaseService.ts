@@ -10,6 +10,14 @@ export class RealtimeDatabaseService {
     this.database = database;
   }
 
+  public async addData(path: string, data: any) {
+    if (await this.isPathPopulated(path)) {
+      this.updateValue(path, data);
+    } else {
+      this.addData(path, data);
+    }
+  }
+
   public async getValue(path: string): Promise<any> {
     try {
       const snapshot = await this.database.ref(path).once("value");

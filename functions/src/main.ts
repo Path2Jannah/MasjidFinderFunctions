@@ -54,17 +54,9 @@ functions.https.onRequest(async (_req, res) => {
         console.log("Success: ", response);
         const salaahTimes = response.data.timings;
         const dates = response.data.date;
-        if (await realtimeDatabaseService.isPathPopulated(timesPath) && await realtimeDatabaseService.isPathPopulated(datePath)) {
-          console.info("Data found in database... updating");
-          realtimeDatabaseService.updateValue(timesPath, salaahTimes);
-          realtimeDatabaseService.updateValue(datePath, dates);
-          res.status(200).send(salaahTimes);
-        } else {
-          console.info("Data found in database... adding");
-          realtimeDatabaseService.setValue(timesPath, salaahTimes);
-          realtimeDatabaseService.setValue(datePath, dates);
-          res.status(200).send(salaahTimes);
-        }
+        realtimeDatabaseService.addData(timesPath, salaahTimes);
+        realtimeDatabaseService.addData(datePath, dates);
+        res.status(200).send(salaahTimes);
       })
       .catch((error) => {
         console.log("Fatal error: ", error as string);
@@ -72,6 +64,11 @@ functions.https.onRequest(async (_req, res) => {
       });
 });
 
+/**
+ * Inital setup of the user node in the firestore database.
+ * This function will be triggered when a new user is added to the Firebase Authentication list.
+ * Should have a function that verifies these fields and make it easier for new fields to be added to existing users.
+ */
 export const CreateNewUserNode = functions.auth.user().onCreate(async (user: admin.auth.UserRecord) => {
   const {uid, email, displayName} = user;
   const data = {
@@ -84,6 +81,10 @@ export const CreateNewUserNode = functions.auth.user().onCreate(async (user: adm
   await userdB.addDocumentWithID(data.uid, data);
 });
 
+/**
+ * This removes a user node in the Firestore database when a user is removed from the Firebase Authentication list.
+ * Currently a full deletion of a user.
+ */
 export const DeleteUserNode = functions.auth.user().onDelete(async (user: admin.auth.UserRecord) => {
   await userdB.deleteDocument(user.uid);
 });
