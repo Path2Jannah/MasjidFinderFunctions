@@ -10,6 +10,13 @@ export class RealtimeDatabaseService {
     this.database = database;
   }
 
+  /**
+   * This method adds data to the specified path.
+   * Depending if the data is already populated at the specified path,
+   *  it will either add the data or update it.
+   * @param path {string} The specified path in the dB.
+   * @param data {any} The data that needs to be added to the dB
+   */
   public async addData(path: string, data: any) {
     if (await this.isPathPopulated(path)) {
       this.updateValue(path, data);
