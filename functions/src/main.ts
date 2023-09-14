@@ -91,18 +91,18 @@ export const DeleteUserNode = functions.auth.user().onDelete(async (user: admin.
 
 export const UpdateDailySalaahHistory =
 functions.https.onRequest(async (req, res) => {
-  if (!req.query.uid) {
+  if (!req.body.uid) {
     res.status(400).json({error: "No user specified."});
     return;
   }
-  if (!req.query.salaahStatus) {
+  if (!req.body.salaahStatus) {
     res.send(400).json({error: "No data provided"});
   }
-  if (typeof req.query.uid != "string") {
+  if (typeof req.body.uid != "string") {
     res.send(400).json({error: "Malformed userID"});
   }
-  const userUID: string = req.query.uid as string;
-  await userdB.addDocumentWithID(userUID, {salaahHistory: req.query.salaahStatus});
+  const userUID: string = req.body.uid as string;
+  await userdB.addDocumentWithID(userUID, {salaahHistory: req.body.salaahStatus});
   res.send(200);
 });
 
