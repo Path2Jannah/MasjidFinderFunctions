@@ -31,7 +31,7 @@ new GeolocationService("AIzaSyCgK6O9xJIpjntal0ARJFm9noqxN4wHDXc", googleMaps);
 const firestoreService =
 new FirestoreService(firestoreDatabase, "masjid_cape_town");
 
-const userdB = 
+const userdB =
 new FirestoreService(firestoreDatabase, "user_registry");
 
 const realtimeDatabaseService =
@@ -73,7 +73,7 @@ functions.https.onRequest(async (_req, res) => {
 });
 
 export const CreateNewUserNode = functions.auth.user().onCreate((user: admin.auth.UserRecord) => {
-  const { uid, email, displayName } = user;
+  const {uid, email, displayName} = user;
 
   userdB.addDocument(uid);
   userdB.addDocument(email);
