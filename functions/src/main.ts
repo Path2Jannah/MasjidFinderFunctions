@@ -102,8 +102,12 @@ functions.https.onRequest(async (req, res) => {
     res.send(400).json({error: "Malformed userID"});
   }
   const userUID: string = req.body.uid as string;
-  await userdB.addDocumentWithID(userUID, {salaahHistory: req.body.salaahStatus});
-  res.send(200);
+  if (await userdB.getDocumentById(userUID) != null) {
+    await userdB.updateDocument(userUID, {salaahHistory: req.body.salaahStatus});
+    res.send(200);
+  } else {
+    res.send(400).json({error: "No user found."});
+  }
 });
 
 // export const writeLocationGeocodeTableToRealtimeDatabase =
