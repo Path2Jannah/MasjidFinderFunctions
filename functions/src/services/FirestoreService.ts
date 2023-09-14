@@ -28,12 +28,12 @@ export class FirestoreService {
   }
 
   // Get a document by its ID
-  public async getDocumentById(documentId: string): Promise<FirebaseFirestore.DocumentData | null> {
+  public async getDocumentById(documentId: string): Promise<FirebaseFirestore.DocumentData> {
     const documentSnapshot = await this.collection.doc(documentId).get();
     if (documentSnapshot.exists) {
       return documentSnapshot;
     } else {
-      return null;
+      throw Error;
     }
   }
 
