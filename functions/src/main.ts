@@ -17,7 +17,7 @@ import {DateTimeHelper} from "./helper/DateTimeHelper";
 import {DateFormat, Locale, Timezone} from "./helper/DateEnums";
 
 admin.initializeApp();
-const googleMaps = new Client({});
+const googleMaps = new Client();
 const realtimeDatabase = admin.database();
 const firestoreDatabase = new admin.firestore.Firestore();
 const dateTimeHelper = new DateTimeHelper();
@@ -31,6 +31,9 @@ new GeolocationService("AIzaSyCgK6O9xJIpjntal0ARJFm9noqxN4wHDXc", googleMaps);
 const firestoreService =
 new FirestoreService(firestoreDatabase, "masjid_cape_town");
 
+const userdB = 
+new FirestoreService(firestoreDatabase, "user_registry");
+
 const realtimeDatabaseService =
 new RealtimeDatabaseService(realtimeDatabase);
 
@@ -39,31 +42,6 @@ export const getNearbyMosques = functions.https.onRequest(async (req, res) => {
   const response = await geolocationService.getCoordinates(
     currentLocation as string);
   res.status(200).send(`Response: ${response.latitude}, ${response.longitude}`);
-});
-
-export const updateStatusToday = functions.https.onRequest(async (req, res) => {
-  const currentDate = dateTimeHelper.getDate(Locale.SOUTH_AFRICA, Timezone.GMT_PLUS_2, DateFormat.API_DATE);
-  const userId = req.body.userId;
-
-  if (userId != null) {
-    const userFolder = new FirestoreService(firestoreDatabase, userId);
-
-    const data = {
-      date: currentDate,
-      fajr: req.body.fajr,
-      thur: req.body.thur,
-      asr: req.body.asr,
-      magrieb: req.body.magrieb,
-      isha: req.body.isha,
-    };
-
-    userFolder.addDocument(
-        data
-    ).
-        then(async (response:string) => {
-          res.status(200).send(response);
-        });
-  }
 });
 
 export const SalaahTimesDailyCapeTown =
@@ -92,6 +70,14 @@ functions.https.onRequest(async (_req, res) => {
         console.log("Fatal error: ", error as string);
         res.status(400).send(error as string);
       });
+});
+
+export const CreateNewUserNode = functions.auth.user().onCreate((user: admin.auth.UserRecord) => {
+  const { uid, email, displayName } = user;
+
+  userdB.addDocument(uid);
+  userdB.addDocument(email);
+  userdB.addDocument(displayName);
 });
 
 // export const writeLocationGeocodeTableToRealtimeDatabase =
