@@ -78,15 +78,15 @@ export const CreateNewUserNode = functions.auth.user().onCreate(async (user: adm
     uid: uid,
     email: email,
     displayName: displayName,
-    salaahHistory: []
+    salaahHistory: [],
   };
 
-  await userdB.addDocumentWithID(data.uid,data);
+  await userdB.addDocumentWithID(data.uid, data);
 });
 
-export const UpdateSalaahHistory = functions.https.onRequest(async (req, res) => {
-
-})
+export const DeleteUserNode = functions.auth.user().onDelete(async (user: admin.auth.UserRecord) => {
+  await userdB.deleteDocument(user.uid);
+});
 
 // export const writeLocationGeocodeTableToRealtimeDatabase =
 // functions.https.onRequest(async (req, res) => {
