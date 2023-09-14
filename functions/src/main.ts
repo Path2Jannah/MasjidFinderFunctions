@@ -74,10 +74,13 @@ functions.https.onRequest(async (_req, res) => {
 
 export const CreateNewUserNode = functions.auth.user().onCreate((user: admin.auth.UserRecord) => {
   const {uid, email, displayName} = user;
+  const data = {
+    uid: uid,
+    email: email,
+    displayName: displayName,
+  };
 
-  userdB.addDocument(uid);
-  userdB.addDocument(email);
-  userdB.addDocument(displayName);
+  userdB.addDocument(data);
 });
 
 // export const writeLocationGeocodeTableToRealtimeDatabase =
