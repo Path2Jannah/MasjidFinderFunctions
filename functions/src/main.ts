@@ -89,6 +89,23 @@ export const DeleteUserNode = functions.auth.user().onDelete(async (user: admin.
   await userdB.deleteDocument(user.uid);
 });
 
+export const UpdateDailySalaahHistory =
+functions.https.onRequest(async (req, res) => {
+  if (!req.query.uid) {
+    res.status(400).json({error: "No user specified."});
+    return;
+  }
+  if (!req.query.salaahStatus) {
+    res.send(400).json({error: "No data provided"});
+  }
+  if (typeof req.query.uid != "string") {
+    res.send(400).json({error: "Malformed userID"});
+  }
+  const userUID: string = req.query.uid as string;
+  await userdB.addDocumentWithID(userUID, {salaahHistory: req.query.salaahStatus});
+  res.send(200);
+});
+
 // export const writeLocationGeocodeTableToRealtimeDatabase =
 // functions.https.onRequest(async (req, res) => {
 //   const data = await getAreaList();
