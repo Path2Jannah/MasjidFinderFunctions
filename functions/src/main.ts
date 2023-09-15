@@ -66,7 +66,7 @@ functions.https.onRequest(async (_req, res) => {
 
 export const SalaahTimesDaily =
 functions.https.onRequest(async (req, res) => {
-  console.log(req.body.location);
+  console.log(req.body);
   const location = mapToLocation(req.body.location as string);
   if (location != undefined) {
     res.send(200).json({success: location});
