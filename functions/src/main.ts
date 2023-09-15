@@ -12,7 +12,7 @@ import {FirestoreService} from "./services/FirestoreService";
 import {RealtimeDatabaseService} from "./services/RealtimeDatabaseService";
 import {SalaahTimeRequests} from "./SalaahTimeRequests";
 import {SalaahTime} from "./models/SalaahTime";
-import {PredefinedLocations} from "./models/PredefinedLocations";
+import {PredefinedLocations, mapToLocation} from "./models/PredefinedLocations";
 import {DateTimeHelper} from "./helper/DateTimeHelper";
 import {Format, Locale, Timezone} from "./helper/DateEnums";
 import {UpdateSalaahStatusBody} from "./models/UpdateSalaahStatusBody";
@@ -39,6 +39,8 @@ const realtimeDatabaseService =
 new RealtimeDatabaseService(realtimeDatabase);
 
 /**
+ * Admin level API that is triggered on a Google cloud schedular.
+ *
  * Pulls in the Salaah times from the external API.
  * Then populates the Realtime database with the response from the external API.
  */
@@ -60,6 +62,17 @@ functions.https.onRequest(async (_req, res) => {
         console.log("Fatal error: ", error as string);
         res.status(400).send(error as string);
       });
+});
+
+export const SalaahTimesDaily =
+functions.https.onRequest(async (req, res) => {
+  console.log(req.body.location);
+  const location = mapToLocation(req.body.location as string);
+  if (location != undefined) {
+    res.send(200).json({success: location});
+  } else {
+    res.send(400).json({error: "Invalid location."});
+  }
 });
 
 /**
