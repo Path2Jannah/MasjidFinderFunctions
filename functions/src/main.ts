@@ -16,6 +16,7 @@ import {PredefinedLocations, mapToLocation} from "./models/PredefinedLocations";
 import {DateTimeHelper} from "./helper/DateTimeHelper";
 import {Format, Locale, Timezone} from "./helper/DateEnums";
 import {UpdateSalaahStatusBody} from "./models/UpdateSalaahStatusBody";
+import {SalaahTimeLocationRequest} from "./models/request/SalaahTimeLocationRequest";
 
 admin.initializeApp();
 // const googleMaps = new Client();
@@ -66,14 +67,38 @@ functions.https.onRequest(async (_req, res) => {
 
 export const SalaahTimesDaily =
 functions.https.onRequest(async (req, res) => {
-  console.log(req.body);
+  const expectedData: SalaahTimeLocationRequest = {
+    location: "",
+    date: "",
+  };
+
+  if (validateDataStructure(req.body, expectedData)) {
+    res.status(400).send({error: "Data structure invalid"});
+  }
   const location = mapToLocation(req.body.location as string);
   if (location != undefined) {
-    res.send(200).json({success: location});
+    res.status(200).send({success: location});
   } else {
-    res.send(400).json({error: "Invalid location."});
+    res.status(400).send({error: "Invalid location."});
   }
 });
+
+// Function to validate the request body
+function validateDataStructure(data: any, expectedData: SalaahTimeLocationRequest): boolean {
+  // Check if the data is an object
+  if (typeof data !== "object" || data === null) {
+    return false;
+  }
+
+  // Check if all expected fields are present and have the correct types
+  for (const key in expectedData) {
+    if (!(key in data) || typeof data[key] !== typeof expectedData[key as keyof typeof expectedData]) {
+      return false;
+    }
+  }
+
+  return true;
+}
 
 /**
  * Inital setup of the user node in the firestore database.
