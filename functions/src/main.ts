@@ -16,7 +16,6 @@ import {PredefinedLocations, mapToLocation} from "./models/PredefinedLocations";
 import {DateTimeHelper} from "./helper/DateTimeHelper";
 import {Format, Locale, Timezone} from "./helper/DateEnums";
 import {UpdateSalaahStatusBody} from "./models/UpdateSalaahStatusBody";
-import {SalaahTimeLocationRequest} from "./models/request/SalaahTimeLocationRequest";
 
 admin.initializeApp();
 // const googleMaps = new Client();
@@ -67,38 +66,32 @@ functions.https.onRequest(async (_req, res) => {
 
 export const SalaahTimesDaily =
 functions.https.onRequest(async (req, res) => {
-  const expectedData: SalaahTimeLocationRequest = {
-    location: "",
-    date: "",
-  };
-
-  if (validateDataStructure(req.body, expectedData)) {
-    res.status(400).send({error: "Data structure invalid"});
-  }
   const location = mapToLocation(req.body.location as string);
-  if (location != undefined) {
-    res.status(200).send({success: location});
+  const source = req.body.source;
+  if (location != undefined && source == "external") {
+    const salaahTimes = await salaahTimeRequests.getSalaahTimesDaily(dateTimeHelper.getDate(Locale.SOUTH_AFRICA, Timezone.GMT_PLUS_2, Format.API_DATE), PredefinedLocations.CAPE_TOWN);
+    res.status(400).send({timings: salaahTimes.data.timings, date: salaahTimes.data.date.gregorian.date});
   } else {
     res.status(400).send({error: "Invalid location."});
   }
 });
 
 // Function to validate the request body
-function validateDataStructure(data: any, expectedData: SalaahTimeLocationRequest): boolean {
-  // Check if the data is an object
-  if (typeof data !== "object" || data === null) {
-    return false;
-  }
+// function validateDataStructure(data: any, expectedData: SalaahTimeLocationRequest): boolean {
+//   // Check if the data is an object
+//   if (typeof data !== "object" || data === null) {
+//     return false;
+//   }
 
-  // Check if all expected fields are present and have the correct types
-  for (const key in expectedData) {
-    if (!(key in data) || typeof data[key] !== typeof expectedData[key as keyof typeof expectedData]) {
-      return false;
-    }
-  }
+//   // Check if all expected fields are present and have the correct types
+//   for (const key in expectedData) {
+//     if (!(key in data) || typeof data[key] !== typeof expectedData[key as keyof typeof expectedData]) {
+//       return false;
+//     }
+//   }
 
-  return true;
-}
+//   return true;
+// }
 
 /**
  * Inital setup of the user node in the firestore database.
