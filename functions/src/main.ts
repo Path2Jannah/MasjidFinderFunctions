@@ -15,7 +15,7 @@ import {SalaahTime} from "./models/SalaahTime";
 import {PredefinedLocations} from "./models/PredefinedLocations";
 import {DateTimeHelper} from "./helper/DateTimeHelper";
 import {Format, Locale, Timezone} from "./helper/DateEnums";
-import {UpdateSalaahStatusBody} from "./models/UpdateSalaahStatusBody";
+import {isUpdateSalaahStatusRequest} from "./models/UpdateSalaahStatusBody";
 import {isSalaahTimeLocationRequestBody} from "./models/request/SalaahTimeLocationRequest";
 
 admin.initializeApp();
@@ -144,21 +144,19 @@ export const DeleteUserNode = functions.auth.user().onDelete(async (user: admin.
 // TODO: Bug here where the interface isn't able to match up to the the firestore database object.
 export const UpdateDailySalaahHistory =
 functions.https.onRequest(async (req, res) => {
-  if (req.body as UpdateSalaahStatusBody) {
-    console.log("Input body valid");
+  if (isUpdateSalaahStatusRequest(req.body)) {
     try {
       await userdB.getDocumentById(req.body.userID);
       console.log("Found");
     } catch {
       console.log("Erro finding user");
-      res.send(400).json({error: "No user found."});
+      res.status(400).send({error: "No user found."});
     }
     await userdB.updateDocument(req.body.userID, {salaahHistory: req.body.salaahHistory});
     console.log("Update complete");
-    res.send(200).json({success: "Complete"});
+    res.status(200).send({success: "Complete"});
   } else {
-    console.log("Malformed request");
-    res.send(400).json({error: "Malformed request"});
+    res.status(400).send(getErrorResponse("INVALID REQUEST"));
   }
 });
 
