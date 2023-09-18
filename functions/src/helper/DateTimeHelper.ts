@@ -20,6 +20,7 @@ export class DateTimeHelper {
       timezone:Timezone,
       format:Format
   ): string {
+    moment.tz.setDefault("GMT");
     return moment().tz(timezone).locale(locale).format(format);
   }
 }
