@@ -9,7 +9,7 @@ export class DateTimeHelper {
      * Get the current date.
      *
      * @param {Locale} locale - The specific locale we want to generate with.
-     * @param {Timezone} timezone -
+     * @param {string} timezone -
      * The specific timezone we want to generate with.
      * @param {Format} format -
      * The specific format we want to generate with.
@@ -17,7 +17,7 @@ export class DateTimeHelper {
      */
   public getDate(
       locale:Locale,
-      timezone:Timezone,
+      timezone:string,
       format:Format
   ): string {
     moment.tz.setDefault("GMT");

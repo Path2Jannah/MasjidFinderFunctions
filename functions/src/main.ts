@@ -58,7 +58,7 @@ new RealtimeDatabaseService(realtimeDatabase);
  */
 export const SalaahTimesDailyCapeTown =
 functions.https.onRequest(async (_req, res) => {
-  const currentDate = dateTimeHelper.getDate(Locale.SOUTH_AFRICA, Timezone.GMT_PLUS_2, Format.API_DATE);
+  const currentDate = dateTimeHelper.getDate(Locale.SOUTH_AFRICA, "Africa/Johannesburg", Format.API_DATE);
   const timesPath = "/CapeTown/Daily/Times";
   const datePath = "/CapeTown/Daily/Dates";
   salaahTimeRequests.getSalaahTimesDaily(currentDate, PredefinedLocations.CAPE_TOWN).
