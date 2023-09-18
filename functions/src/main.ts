@@ -78,12 +78,8 @@ functions.https.onRequest(async (_req, res) => {
 
 export const SalaahTimesDaily =
 functions.https.onRequest(async (req, res) => {
-  console.log("Request payload:", req.query.body);
-  console.log("Request payload:", req.query.rawBody);
-  console.log("Request payload:", req.body);
-  console.log("Request payload:", req.rawBody);
-  if (isSalaahTimeLocationRequestBody(req.query.body)) {
-    const requestBody = req.query.body;
+  if (isSalaahTimeLocationRequestBody(req.body)) {
+    const requestBody = req.body;
     if (requestBody.location == undefined) {
       res.status(400).send(getErrorResponse("INVALID LOCATION"));
     } else {
