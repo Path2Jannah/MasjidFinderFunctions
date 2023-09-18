@@ -78,6 +78,10 @@ functions.https.onRequest(async (_req, res) => {
 
 export const SalaahTimesDaily =
 functions.https.onRequest(async (req, res) => {
+  console.log("Request payload:", req.query.body);
+  console.log("Request payload:", req.query.rawBody);
+  console.log("Request payload:", req.body);
+  console.log("Request payload:", req.rawBody);
   if (isSalaahTimeLocationRequestBody(req.query.body)) {
     const requestBody = req.query.body;
     if (requestBody.location == undefined) {
