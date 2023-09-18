@@ -12,7 +12,7 @@ import {FirestoreService} from "./services/FirestoreService";
 import {RealtimeDatabaseService} from "./services/RealtimeDatabaseService";
 import {SalaahTimeRequests} from "./SalaahTimeRequests";
 import {SalaahTime} from "./models/SalaahTime";
-import {PredefinedLocations, mapToLocation} from "./models/PredefinedLocations";
+import {PredefinedLocations} from "./models/PredefinedLocations";
 import {DateTimeHelper} from "./helper/DateTimeHelper";
 import {Format, Locale, Timezone} from "./helper/DateEnums";
 import {UpdateSalaahStatusBody} from "./models/UpdateSalaahStatusBody";
