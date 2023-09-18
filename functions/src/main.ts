@@ -26,6 +26,17 @@ const dateTimeHelper = new DateTimeHelper();
 const salaahTimeRequests =
 new SalaahTimeRequests();
 
+const successResponse = {
+  status: "success",
+};
+
+function getErrorResponse(error: string): { status: string; message: string } {
+  return {
+    status: "error",
+    message: error,
+  };
+}
+
 // const geolocationService =
 // new GeolocationService("AIzaSyCgK6O9xJIpjntal0ARJFm9noqxN4wHDXc", googleMaps);
 
@@ -56,11 +67,11 @@ functions.https.onRequest(async (_req, res) => {
         const dates = response.data.date;
         realtimeDatabaseService.addData(timesPath, salaahTimes);
         realtimeDatabaseService.addData(datePath, dates);
-        res.status(200).send(salaahTimes);
+        res.status(200).send(successResponse);
       })
       .catch((error) => {
         console.log("Fatal error: ", error as string);
-        res.status(400).send(error as string);
+        res.status(400).send(getErrorResponse(error as string));
       });
 });
 
@@ -70,9 +81,9 @@ functions.https.onRequest(async (req, res) => {
   const source = req.body.source;
   if (location != undefined && source == "external") {
     const salaahTimes = await salaahTimeRequests.getSalaahTimesDaily(dateTimeHelper.getDate(Locale.SOUTH_AFRICA, Timezone.GMT_PLUS_2, Format.API_DATE), PredefinedLocations.CAPE_TOWN);
-    res.status(400).send({timings: salaahTimes.data.timings, date: salaahTimes.data.date.gregorian.date});
+    res.status(400).send({successResponse, timings: salaahTimes.data.timings, date: salaahTimes.data.date.gregorian.date});
   } else {
-    res.status(400).send({error: "Invalid location."});
+    res.status(400).send(getErrorResponse("INVALID LOCATION"));
   }
 });
 
