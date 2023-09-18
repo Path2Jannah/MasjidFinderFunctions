@@ -1,4 +1,4 @@
-import {Format, Locale, Timezone} from "./DateEnums";
+import {Format, Locale} from "./DateEnums";
 import moment from "moment-timezone";
 
 /**
