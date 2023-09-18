@@ -48,6 +48,10 @@ export class FirestoreService {
     await this.collection.doc(documentId).update(updateData);
   }
 
+  public async addToNode(documentId: string, value: FirebaseFirestore.DocumentData) {
+    await this.collection.doc(documentId).set(value, {merge: true});
+  }
+
   // Delete a document by its ID
   public async deleteDocument(documentId: string): Promise<void> {
     await this.collection.doc(documentId).delete();

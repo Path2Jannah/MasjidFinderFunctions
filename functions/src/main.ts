@@ -152,7 +152,7 @@ functions.https.onRequest(async (req, res) => {
       console.log("Erro finding user");
       res.status(400).send({error: "No user found."});
     }
-    await userdB.updateDocument(req.body.userID, {salaahHistory: req.body.salaahHistory});
+    await userdB.addToNode(req.body.userID, {salaahHistory: req.body.salaahHistory});
     console.log("Update complete");
     res.status(200).send({success: "Complete"});
   } else {
