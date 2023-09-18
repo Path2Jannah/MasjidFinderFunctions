@@ -85,7 +85,13 @@ functions.https.onRequest(async (req, res) => {
     } else {
       if (requestBody.source == "external") {
         const salaahTimes = await salaahTimeRequests.getSalaahTimesDaily(dateTimeHelper.getDate(Locale.SOUTH_AFRICA, Timezone.GMT_PLUS_2, Format.API_DATE), PredefinedLocations.CAPE_TOWN);
-        res.status(400).send({successResponse, timings: salaahTimes.data.timings, date: salaahTimes.data.date.gregorian.date});
+        res.status(200).send({successResponse, timings: salaahTimes.data.timings, date: salaahTimes.data.date.gregorian.date});
+      } else if (requestBody.source == "internal") {
+        const salaahTimes = await realtimeDatabaseService.getValue("/CapeTown/Daily/Times");
+        const date = await realtimeDatabaseService.getValue("/CapeTown/Daily/Dates/gregorian/date");
+        res.status(200).send({successResponse, timmings: salaahTimes, date: date});
+      } else {
+        res.status(400).send(getErrorResponse("INVALID SOURCE"));
       }
     }
   } else {
