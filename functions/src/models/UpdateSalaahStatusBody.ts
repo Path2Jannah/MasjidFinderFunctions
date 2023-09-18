@@ -30,6 +30,7 @@ function isValidDateFormat(dateString: string): boolean {
  * @return {boolean} true if the input data is UserData, otherwise false.
  */
 export function validateSalaahHistoryRequest(data: any): data is UserData {
+  console.log("Validation on: ", data);
   if (
     typeof data === "object" &&
     data !== null &&
