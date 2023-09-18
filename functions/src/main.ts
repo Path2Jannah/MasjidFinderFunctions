@@ -16,7 +16,7 @@ import {PredefinedLocations, mapToLocation} from "./models/PredefinedLocations";
 import {DateTimeHelper} from "./helper/DateTimeHelper";
 import {Format, Locale, Timezone} from "./helper/DateEnums";
 import {UpdateSalaahStatusBody} from "./models/UpdateSalaahStatusBody";
-import { isSalaahTimeLocationRequestBody } from "./models/request/SalaahTimeLocationRequest";
+import {isSalaahTimeLocationRequestBody} from "./models/request/SalaahTimeLocationRequest";
 
 admin.initializeApp();
 // const googleMaps = new Client();
@@ -85,7 +85,7 @@ functions.https.onRequest(async (req, res) => {
     } else {
       if (requestBody.source == "external") {
         const salaahTimes = await salaahTimeRequests.getSalaahTimesDaily(dateTimeHelper.getDate(Locale.SOUTH_AFRICA, Timezone.GMT_PLUS_2, Format.API_DATE), PredefinedLocations.CAPE_TOWN);
-        res.status(400).send({successResponse, timings: salaahTimes.data.timings, date: salaahTimes.data.date.gregorian.date});  
+        res.status(400).send({successResponse, timings: salaahTimes.data.timings, date: salaahTimes.data.date.gregorian.date});
       }
     }
   } else {
