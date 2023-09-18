@@ -15,7 +15,7 @@ import {SalaahTime} from "./models/SalaahTime";
 import {PredefinedLocations} from "./models/PredefinedLocations";
 import {DateTimeHelper} from "./helper/DateTimeHelper";
 import {Format, Locale, Timezone} from "./helper/DateEnums";
-import {isUpdateSalaahStatusRequest} from "./models/UpdateSalaahStatusBody";
+import {validateSalaahHistoryRequest} from "./models/UpdateSalaahStatusBody";
 import {isSalaahTimeLocationRequestBody} from "./models/request/SalaahTimeLocationRequest";
 
 admin.initializeApp();
@@ -144,7 +144,7 @@ export const DeleteUserNode = functions.auth.user().onDelete(async (user: admin.
 // TODO: Bug here where the interface isn't able to match up to the the firestore database object.
 export const UpdateDailySalaahHistory =
 functions.https.onRequest(async (req, res) => {
-  if (isUpdateSalaahStatusRequest(req.body)) {
+  if (validateSalaahHistoryRequest(req.body)) {
     try {
       await userdB.getDocumentById(req.body.userID);
       console.log("Found");

@@ -1,34 +1,57 @@
-interface SalaahStatus {
-    fajr: boolean,
-    thur: boolean,
-    asr: boolean,
-    magrieb: boolean,
-    isha: boolean,
-}
+interface SalaahHistory {
+    [date: string]: {
+      fajr: boolean;
+      dhuhr: boolean;
+      asr: boolean;
+      maghrib: boolean;
+      isha: boolean;
+    };
+  }
 
-interface UserSalaahStatus {
-    date: SalaahStatus
-}
+  interface UserData {
+    userID: string;
+    salaahHistory: SalaahHistory;
+  }
 
-export interface UpdateSalaahStatusRequest {
-    userID: string,
-    salaahHistory: UserSalaahStatus,
+/**
+* This function is to validate that the date is given in the correct format.
+* @param {string} dateString - The input date from the client.
+* @return {boolean} true if the input data is valid, otherwise false.
+*/
+function isValidDateFormat(dateString: string): boolean {
+// Define a regular expression pattern to match the date format (DD-MM-YYYY)
+  const dateFormatPattern = /^\d{2}-\d{2}-\d{4}$/;
+  return dateFormatPattern.test(dateString);
 }
 
 /**
- * Validates a UpdateSalaahStatusRequest.
- *
- * @param {any} obj - The object to validate.
- * @return {boolean} `true` if the object is valid, `false` otherwise.
+ * This function is to validate the data from the client.
+ * @param {any} data - The input data from the client.
+ * @return {boolean} true if the input data is UserData, otherwise false.
  */
-export function isUpdateSalaahStatusRequest(obj: any):
- obj is UpdateSalaahStatusRequest {
-  return (
-    typeof obj.userID === "string" &&
-    typeof obj.salaahHistory.date.fajr === "boolean" &&
-    typeof obj.salaahHistory.date.thur === "boolean" &&
-    typeof obj.salaahHistory.date.asr === "boolean" &&
-    typeof obj.salaahHistory.date.magrieb === "boolean" &&
-    typeof obj.salaahHistory.date.isha === "boolean"
-  );
+export function validateSalaahHistoryRequest(data: any): data is UserData {
+  if (
+    typeof data === "object" &&
+    data !== null &&
+    "userID" in data &&
+    "salaahHistory" in data &&
+    typeof data.userID === "string" &&
+    typeof data.salaahHistory === "object" &&
+      Object.keys(data.salaahHistory).every((date) => {
+        const entry = data.salaahHistory[date];
+        return (
+          typeof entry === "object" &&
+          typeof entry.fajr === "boolean" &&
+          typeof entry.dhuhr === "boolean" &&
+          typeof entry.asr === "boolean" &&
+          typeof entry.maghrib === "boolean" &&
+          typeof entry.isha === "boolean" &&
+          isValidDateFormat(date) // Check if the date format is valid
+        );
+      })
+  ) {
+    return true;
+  } else {
+    return false;
+  }
 }
