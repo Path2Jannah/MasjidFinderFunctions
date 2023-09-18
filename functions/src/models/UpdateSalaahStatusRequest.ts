@@ -20,6 +20,7 @@ interface SalaahHistory {
 */
 function isValidDateFormat(dateString: string): boolean {
 // Define a regular expression pattern to match the date format (DD-MM-YYYY)
+  console.log("Validation on: ", dateString);
   const dateFormatPattern = /^\d{2}-\d{2}-\d{4}$/;
   return dateFormatPattern.test(dateString);
 }
@@ -31,6 +32,8 @@ function isValidDateFormat(dateString: string): boolean {
  */
 export function validateSalaahHistoryRequest(data: any): data is UserData {
   console.log("Validation on: ", data);
+  console.log("Validation on userID: ", data.userID);
+  console.log("Validation on salaahHistory object: ", data.salaahHistory);
   if (
     typeof data === "object" &&
     data !== null &&
@@ -40,6 +43,12 @@ export function validateSalaahHistoryRequest(data: any): data is UserData {
     typeof data.salaahHistory === "object" &&
       Object.keys(data.salaahHistory).every((date) => {
         const entry = data.salaahHistory[date];
+        console.log("Validation on: ", entry.fajr);
+        console.log("Validation on: ", entry.dhuhr);
+        console.log("Validation on: ", entry.asr);
+        console.log("Validation on: ", entry.maghrib);
+        console.log("Validation on: ", entry.isha);
+
         return (
           typeof entry === "object" &&
           typeof entry.fajr === "boolean" &&
