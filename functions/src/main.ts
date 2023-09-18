@@ -89,7 +89,7 @@ functions.https.onRequest(async (req, res) => {
       }
     }
   } else {
-    res.send(400).send(getErrorResponse("INVALID REQUEST"));
+    res.status(400).send(getErrorResponse("INVALID REQUEST"));
   }
 });
 
