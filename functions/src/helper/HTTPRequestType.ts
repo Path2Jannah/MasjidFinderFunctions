@@ -9,8 +9,8 @@ import {HttpsError} from "firebase-functions/v1/auth";
  */
 export function validateHttpRequest(incoming: string, type: HTTPType): void {
   if (incoming !== type) {
-    throw new HttpsError("unimplemented", `Incorrect request type.
-    Should be ${type}`);
+    throw new HttpsError("unimplemented", `Incorrect request type. Should
+     be ${type}`);
   }
 }
 

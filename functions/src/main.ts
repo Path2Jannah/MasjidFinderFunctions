@@ -164,6 +164,7 @@ functions.https.onRequest(async (req, res) => {
   } catch (error: any) {
     let statusCode = 500; // Internal Server Error by default
     let errorMessage = "An error occurred";
+    console.log(error.message);
 
     if (error.message === `Incorrect request type. Should be ${HTTPType.POST}`) {
       statusCode = 400; // Bad Request for incorrect request type
