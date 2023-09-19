@@ -90,7 +90,7 @@ functions.https.onRequest(async (req, res) => {
       } else if (requestBody.source == "internal") {
         const salaahTimes = await realtimeDatabaseService.getValue("/CapeTown/Daily/Times");
         const date = await realtimeDatabaseService.getValue("/CapeTown/Daily/Dates/gregorian/date");
-        res.status(200).send({successResponse, timmings: salaahTimes, date: date});
+        res.status(200).send({successResponse, timings: salaahTimes, date: date});
       } else {
         res.status(400).send(getErrorResponse("INVALID SOURCE"));
       }
