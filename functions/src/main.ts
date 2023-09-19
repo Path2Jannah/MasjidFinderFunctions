@@ -166,7 +166,7 @@ functions.https.onRequest(async (req, res) => {
     let errorMessage = "An error occurred";
     console.log(error.message);
 
-    if (error.message === `Incorrect request type. Should be ${HTTPType.POST}`) {
+    if (error.code === "unimplemented") {
       statusCode = 400; // Bad Request for incorrect request type
       errorMessage = error.message;
     }
