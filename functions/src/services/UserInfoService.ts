@@ -1,5 +1,3 @@
-import {FirestoreService} from "./FirestoreService";
-
 /**
  * User info service.
  *
@@ -8,16 +6,16 @@ import {FirestoreService} from "./FirestoreService";
  * Write salaah status to database.
  */
 export class UserInfoService {
-  /**
-     * Insance of the Firestore service
-     */
-  private userdB : FirestoreService;
+  // /**
+  //    * Insance of the Firestore service
+  //    */
+  // private userdB : FirestoreService;
 
-  /**
-   *
-   * @param {FirestoreService} userdB - The instance of the userDB.
-   */
-  constructor(userdB: FirestoreService) {
-    this.userdB = userdB;
-  }
+  // /**
+  //  *
+  //  * @param {FirestoreService} userdB - The instance of the userDB.
+  //  */
+  // constructor(userdB: FirestoreService) {
+  //   this.userdB = userdB;
+  // }
 }
