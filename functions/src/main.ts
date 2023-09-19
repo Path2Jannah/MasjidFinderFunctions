@@ -17,6 +17,8 @@ import {DateTimeHelper} from "./helper/DateTimeHelper";
 import {Format, Locale, Timezone} from "./helper/DateEnums";
 import {validateSalaahHistoryRequest} from "./models/UpdateSalaahStatusRequest";
 import {isSalaahTimeLocationRequestBody} from "./models/request/SalaahTimeLocationRequest";
+import { HTTPType, validateHttpRequest } from "./helper/HTTPRequestType";
+import { HttpsError } from "firebase-functions/v1/auth";
 
 admin.initializeApp();
 // const googleMaps = new Client();
@@ -144,19 +146,32 @@ export const DeleteUserNode = functions.auth.user().onDelete(async (user: admin.
 // TODO: Bug here where the interface isn't able to match up to the the firestore database object.
 export const UpdateDailySalaahHistory =
 functions.https.onRequest(async (req, res) => {
-  if (validateSalaahHistoryRequest(req.body)) {
-    try {
-      await userdB.getDocumentById(req.body.userID);
-      console.log("Found");
-    } catch {
-      console.log("Erro finding user");
-      res.status(400).send({error: "No user found."});
+  try {
+    validateHttpRequest(req.method, HTTPType.POST)
+    if (validateSalaahHistoryRequest(req.body)) {
+      try {
+        await userdB.getDocumentById(req.body.userID);
+        console.log("Found");
+      } catch {
+        console.log("Erro finding user");
+        res.status(400).send({error: "No user found."});
+      }
+      await userdB.addToNode(req.body.userID, {salaahHistory: req.body.salaahHistory});
+      console.log("Update complete");
+      res.status(200).send({success: "Complete"});
+    } else {
+      res.status(400).send(getErrorResponse("INVALID REQUEST"));
     }
-    await userdB.addToNode(req.body.userID, {salaahHistory: req.body.salaahHistory});
-    console.log("Update complete");
-    res.status(200).send({success: "Complete"});
-  } else {
-    res.status(400).send(getErrorResponse("INVALID REQUEST"));
+  } catch (error: any) {
+    let statusCode = 500; // Internal Server Error by default
+    let errorMessage = "An error occurred";
+
+    if (error.message === `Incorrect request type. Should be ${HTTPType.POST}`) {
+      statusCode = 400; // Bad Request for incorrect request type
+      errorMessage = error.message;
+    }
+
+    res.status(statusCode).send(errorMessage);
   }
 });
 

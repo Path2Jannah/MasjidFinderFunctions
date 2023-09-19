@@ -1,14 +1,16 @@
+import {HttpsError} from "firebase-functions/v1/auth";
+
 /**
  * Asserts that the incomining HTTP request is the correct method.
  * @param {string} incoming - The incoming data
  * @param {HTTPType} type - The needed type
- * @return {boolean} true if the validation passes, otherwise false
+ * @return {void} if the validation passes otherwise a HttpsError
+ * will be thrown
  */
-export function validateHttpRequest(incoming: string, type: HTTPType): boolean {
+export function validateHttpRequest(incoming: string, type: HTTPType): void {
   if (incoming !== type) {
-    return false;
-  } else {
-    return true;
+    throw new HttpsError("unimplemented", `Incorrect request type.
+    Should be ${type}`);
   }
 }
 
