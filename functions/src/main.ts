@@ -17,8 +17,7 @@ import {DateTimeHelper} from "./helper/DateTimeHelper";
 import {Format, Locale, Timezone} from "./helper/DateEnums";
 import {validateSalaahHistoryRequest} from "./models/UpdateSalaahStatusRequest";
 import {isSalaahTimeLocationRequestBody} from "./models/request/SalaahTimeLocationRequest";
-import { HTTPType, validateHttpRequest } from "./helper/HTTPRequestType";
-import { HttpsError } from "firebase-functions/v1/auth";
+import {HTTPType, validateHttpRequest} from "./helper/HTTPRequestType";
 
 admin.initializeApp();
 // const googleMaps = new Client();
@@ -147,7 +146,7 @@ export const DeleteUserNode = functions.auth.user().onDelete(async (user: admin.
 export const UpdateDailySalaahHistory =
 functions.https.onRequest(async (req, res) => {
   try {
-    validateHttpRequest(req.method, HTTPType.POST)
+    validateHttpRequest(req.method, HTTPType.POST);
     if (validateSalaahHistoryRequest(req.body)) {
       try {
         await userdB.getDocumentById(req.body.userID);
