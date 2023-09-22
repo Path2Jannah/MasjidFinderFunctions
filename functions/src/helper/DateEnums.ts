@@ -7,5 +7,5 @@ export enum Locale {
 }
 
 export enum Timezone {
-    GMT_PLUS_2 = "GMT+2",
+    GMT_PLUS_2 = "Africa/Johannesburg",
 }
