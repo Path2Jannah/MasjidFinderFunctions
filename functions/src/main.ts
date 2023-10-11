@@ -99,7 +99,7 @@ functions.https.onRequest(async (req, res) => {
   const results: myResults[] = [];
 
   snapshot.forEach((doc) => {
-    const geoPoint = doc.getGeoPoint("co-ord");
+    const geoPoint = doc["co-ord"];
     if (geoPoint != null) {
       const latitude = geoPoint.latitude as number;
       const longitude = geoPoint.longitude as number;
