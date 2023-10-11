@@ -81,7 +81,6 @@ functions.https.onRequest(async (_req, res) => {
 });
 
 type myResults = {
-  id: number,
   name: string,
   distance: number
 }
@@ -101,6 +100,7 @@ functions.https.onRequest(async (req, res) => {
   snapshot.forEach((doc) => {
     const geoPoint = doc["co-ord"];
     if (geoPoint != null) {
+      console.log("Calculate distance to: ", doc.masjid_name);
       const latitude = geoPoint.latitude as number;
       const longitude = geoPoint.longitude as number;
       // Use latitude and longitude as needed
@@ -108,7 +108,6 @@ functions.https.onRequest(async (req, res) => {
       const distance = haversineDistance(userLat, userLong, latitude, longitude);
 
       results.push({
-        id: doc.id,
         name: doc.masjid_name,
         distance: distance,
       });
