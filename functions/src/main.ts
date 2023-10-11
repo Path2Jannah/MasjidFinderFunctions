@@ -116,7 +116,9 @@ functions.https.onRequest(async (req, res) => {
     }
   });
 
-  res.status(200).send(results);
+  const sortedResults = results.sort((a, b) => b.distance - a.distance);
+
+  res.status(200).send(sortedResults);
 });
 
 export const SalaahTimesDaily =
