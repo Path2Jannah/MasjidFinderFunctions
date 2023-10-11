@@ -116,9 +116,9 @@ functions.https.onRequest(async (req, res) => {
       // Handle the case where the GeoPoint is null
       console.log("No value");
     }
-
-    res.status(200).send(results);
   });
+
+  res.status(200).send(results);
 });
 
 export const SalaahTimesDaily =
