@@ -116,7 +116,7 @@ functions.https.onRequest(async (req, res) => {
     }
   });
 
-  const sortedResults = results.sort((a, b) => b.distance - a.distance);
+  const sortedResults = results.sort((a, b) => a.distance - b.distance);
 
   res.status(200).send(sortedResults);
 });
