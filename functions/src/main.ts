@@ -18,6 +18,7 @@ import {Format, Locale, Timezone} from "./helper/DateEnums";
 import {validateSalaahHistoryRequest} from "./models/UpdateSalaahStatusRequest";
 import {isSalaahTimeLocationRequestBody} from "./models/request/SalaahTimeLocationRequest";
 import {HTTPType, validateHttpRequest} from "./helper/HTTPRequestType";
+import { error } from "console";
 
 admin.initializeApp();
 // const googleMaps = new Client();
@@ -48,6 +49,9 @@ function getErrorResponse(error: string): { status: string; message: string } {
 const userdB =
 new FirestoreService(firestoreDatabase, "user_registry");
 
+const masjiddB =
+new FirestoreService(firestoreDatabase, "masjid_cape_town");
+
 const realtimeDatabaseService =
 new RealtimeDatabaseService(realtimeDatabase);
 
@@ -75,6 +79,47 @@ functions.https.onRequest(async (_req, res) => {
         console.log("Fatal error: ", error as string);
         res.status(400).send(getErrorResponse(error as string));
       });
+});
+
+type myResults = {
+  id: number,
+  name: string,
+  distance: number
+}
+
+export const getMasjidList = 
+functions.https.onRequest(async (req, res) => {
+  const userLat = req.body.lat;
+  const userLong = req.body.long;
+
+  if (!userLat || !userLong) {
+    res.status(400).send(getErrorResponse("INVALID REQUEST"));
+  }
+
+  const snapshot = await masjiddB.getCollection();
+  const results: myResults[] = [];
+
+  snapshot.forEach((doc) => {
+    const geoPoint = doc.getGeoPoint("location_field_name");
+    if (geoPoint != null) {
+      const latitude = geoPoint.latitude as number;
+      const longitude = geoPoint.longitude as number;
+      // Use latitude and longitude as needed
+
+      const distance = haversineDistance(userLat, userLong, latitude, longitude);
+
+      results.push({
+        id: doc.id,
+        name: doc.masjid_name,
+        distance: distance,
+      });
+    } else {
+      // Handle the case where the GeoPoint is null
+      console.log("No value");
+    }
+
+    res.status(200).send(results);
+  });
 });
 
 export const SalaahTimesDaily =
@@ -449,3 +494,54 @@ functions.https.onRequest(async (req, res) => {
 //     currentLocation as string);
 //   res.status(200).send(`Response: ${response.latitude}, ${response.longitude}`);
 // });
+
+// /**
+//  * Calculates the distance (in kms) between point A and B using earth's radius as the spherical surface
+//  * @param pointA Coordinates from Point A
+//  * @param pointB Coordinates from Point B
+//  * Based on https://www.movable-type.co.uk/scripts/latlong.html
+//  */
+// function haversineDistance(pointA: Coordinates, pointB: Coordinates): number {
+//   const radius = 6371; // Earth radius in km
+
+//   // convert latitude and longitude to radians
+//   const deltaLatitude = (pointB.latitude - pointA.latitude) * Math.PI / 180;
+//   const deltaLongitude = (pointB.longitude - pointA.longitude) * Math.PI / 180;
+
+//   const halfChordLength = Math.cos(
+//       pointA.latitude * Math.PI / 180) * Math.cos(pointB.latitude * Math.PI / 180) *
+//       Math.sin(deltaLongitude/2) * Math.sin(deltaLongitude/2) +
+//       Math.sin(deltaLatitude/2) * Math.sin(deltaLatitude/2);
+
+//   const angularDistance = 2 * Math.atan2(Math.sqrt(halfChordLength), Math.sqrt(1 - halfChordLength));
+
+//   return radius * angularDistance;
+// }
+
+/**
+ * Calculates the distance (in kms) between point A and B using earth's radius as the spherical surface
+ * @param pointA Coordinates from Point A
+ * @param pointB Coordinates from Point B
+ * Based on https://www.movable-type.co.uk/scripts/latlong.html
+ */
+function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const radius = 6371; // Earth radius in km
+
+  // convert latitude and longitude to radians
+  const deltaLatitude = (lat2 - lat1) * Math.PI / 180;
+  const deltaLongitude = (lon2 - lon1) * Math.PI / 180;
+
+  const halfChordLength = Math.cos(
+      lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(deltaLongitude/2) * Math.sin(deltaLongitude/2) +
+      Math.sin(deltaLatitude/2) * Math.sin(deltaLatitude/2);
+
+  const angularDistance = 2 * Math.atan2(Math.sqrt(halfChordLength), Math.sqrt(1 - halfChordLength));
+
+  return radius * angularDistance;
+}
+
+interface Coordinates {
+  latitude: number;
+  longitude: number;
+}
