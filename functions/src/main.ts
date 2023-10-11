@@ -99,9 +99,7 @@ functions.https.onRequest(async (req, res) => {
 
   snapshot.forEach((doc) => {
     const geoPoint = doc["co-ord"];
-    console.log("Masjid: ", doc.masjid_name, "geoLocation: ", geoPoint.latitude, geoPoint.longitude);
     if (geoPoint != null) {
-      console.log("Calculate distance to: ", doc.masjid_name);
       const latitude = geoPoint.latitude as number;
       const longitude = geoPoint.longitude as number;
       // Use latitude and longitude as needed
