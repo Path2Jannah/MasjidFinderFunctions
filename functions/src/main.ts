@@ -18,7 +18,6 @@ import {Format, Locale, Timezone} from "./helper/DateEnums";
 import {validateSalaahHistoryRequest} from "./models/UpdateSalaahStatusRequest";
 import {isSalaahTimeLocationRequestBody} from "./models/request/SalaahTimeLocationRequest";
 import {HTTPType, validateHttpRequest} from "./helper/HTTPRequestType";
-import { error } from "console";
 
 admin.initializeApp();
 // const googleMaps = new Client();
@@ -87,7 +86,7 @@ type myResults = {
   distance: number
 }
 
-export const getMasjidList = 
+export const getMasjidList =
 functions.https.onRequest(async (req, res) => {
   const userLat = req.body.lat;
   const userLong = req.body.long;
@@ -518,6 +517,11 @@ functions.https.onRequest(async (req, res) => {
 //   return radius * angularDistance;
 // }
 
+// interface Coordinates {
+//   latitude: number;
+//   longitude: number;
+// }
+
 /**
  * Calculates the distance (in kms) between point A and B using earth's radius as the spherical surface
  * @param pointA Coordinates from Point A
@@ -539,9 +543,4 @@ function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: numbe
   const angularDistance = 2 * Math.atan2(Math.sqrt(halfChordLength), Math.sqrt(1 - halfChordLength));
 
   return radius * angularDistance;
-}
-
-interface Coordinates {
-  latitude: number;
-  longitude: number;
 }
