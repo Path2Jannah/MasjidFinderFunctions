@@ -18,6 +18,7 @@ import {Format, Locale, Timezone} from "./helper/DateEnums";
 import {validateSalaahHistoryRequest} from "./models/UpdateSalaahStatusRequest";
 import {isSalaahTimeLocationRequestBody} from "./models/request/SalaahTimeLocationRequest";
 import {HTTPType, validateHttpRequest} from "./helper/HTTPRequestType";
+import { HadithRequest } from "./HadithRequest";
 
 admin.initializeApp();
 // const googleMaps = new Client();
@@ -27,6 +28,9 @@ const dateTimeHelper = new DateTimeHelper();
 
 const salaahTimeRequests =
 new SalaahTimeRequests();
+
+const hadithRequest = 
+new HadithRequest();
 
 const successResponse = {
   status: "success",
@@ -141,6 +145,16 @@ functions.https.onRequest(async (req, res) => {
     }
   } else {
     res.status(400).send(getErrorResponse("INVALID REQUEST"));
+  }
+});
+
+export const getHadith = 
+functions.https.onRequest(async (_, res) => {
+  try {
+    const hadith = await hadithRequest.getHadith()
+    res.status(200).send({hadith})
+  } catch(error) {
+    res.status(400).send(getErrorResponse("Something went wrong"))
   }
 });
 
