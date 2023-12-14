@@ -3,10 +3,11 @@
 /* eslint-disable max-len */
 
 import {AxiosService} from "./services/AxiosService";
+import {AxiosRequestConfig} from "axios";
 
 export class HadithRequest {
   private axiosService = new AxiosService("https://api.sunnah.com/v1/");
-  private headers = {
+  private headers: AxiosRequestConfig = {
     "X-API-Key": "SqD712P3E82xnwOAEOkGd5JZH8s9wRR24TqNFzjk",
   };
 
