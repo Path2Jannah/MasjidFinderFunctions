@@ -4,7 +4,7 @@ interface Hadith {
     chapterTitle: string;
     urn: number;
     body: string;
-    grades: any[]; // You might want to replace 'any[]' with a more specific type for grades
+    grades: any[];
 }
 
 interface HadithCollection {
