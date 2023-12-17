@@ -18,6 +18,7 @@ import {Format, Locale, Timezone} from "./helper/DateEnums";
 import {validateSalaahHistoryRequest} from "./models/UpdateSalaahStatusRequest";
 import {isSalaahTimeLocationRequestBody} from "./models/request/SalaahTimeLocationRequest";
 import {HTTPType, validateHttpRequest} from "./helper/HTTPRequestType";
+import {createUniqueID} from "./helper/DateLocationID"
 import {HadithRequest} from "./HadithRequest";
 
 admin.initializeApp();
@@ -67,8 +68,10 @@ new RealtimeDatabaseService(realtimeDatabase);
 export const SalaahTimesDailyCapeTown =
 functions.https.onRequest(async (_req, res) => {
   const currentDate = dateTimeHelper.getDate(Locale.SOUTH_AFRICA, "Africa/Johannesburg", Format.API_DATE);
+  const dateLocationID = createUniqueID(currentDate, "CT_ZA");
   const timesPath = "/CapeTown/Daily/Times";
   const datePath = "/CapeTown/Daily/Dates";
+  const idPath = "/CapeTown/Daily/"
   salaahTimeRequests.getSalaahTimesDaily(currentDate, PredefinedLocations.CAPE_TOWN).
       then(async (response:SalaahTime) => {
         console.log("Success: ", response);
@@ -76,7 +79,8 @@ functions.https.onRequest(async (_req, res) => {
         const dates = response.data.date;
         realtimeDatabaseService.addData(timesPath, salaahTimes);
         realtimeDatabaseService.addData(datePath, dates);
-        res.status(200).send(successResponse);
+        realtimeDatabaseService.addData(idPath, dateLocationID);
+        res.status(200).send(successResponse + "IDToken: ", dateLocationID);
       })
       .catch((error) => {
         console.log("Fatal error: ", error as string);
