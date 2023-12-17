@@ -2,9 +2,7 @@
 /* eslint-disable require-jsdoc */
 /* eslint-disable max-len */
 /* eslint-disable indent */
-
-
-import * as crypto from "crypto";
+import {Buffer} from "buffer";
 
 /**
  * Creates a unique ID for salaah time entry.
@@ -13,8 +11,9 @@ import * as crypto from "crypto";
  * @return {string} The ID token.
  */
 export function createUniqueID(date: string, location: string): string {
-  const formattedDate: string = date.slice(0, 10);
-  const combinedComponents = `${formattedDate}_${location}`;
-  const uniqueID: string = crypto.createHash("sha256").update(combinedComponents).digest("hex");
-  return uniqueID;
+  const jsonStringToEncode = {"date": date, "location" :location};
+  const jsonString = JSON.stringify(jsonStringToEncode);
+  const buffer = Buffer.from(jsonString, 'utf-8');
+  const encodedJsonString = buffer.toString('base64');
+  return encodedJsonString;
 }
