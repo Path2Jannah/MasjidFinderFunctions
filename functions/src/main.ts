@@ -80,7 +80,7 @@ functions.https.onRequest(async (_req, res) => {
         realtimeDatabaseService.addData(timesPath, salaahTimes);
         realtimeDatabaseService.addData(datePath, dates);
         realtimeDatabaseService.addData(idPath, dateLocationID);
-        res.status(200).send(successResponse + "IDToken: ", dateLocationID);
+        res.status(200).send(successResponse + "IDToken: " + dateLocationID);
       })
       .catch((error) => {
         console.log("Fatal error: ", error as string);
