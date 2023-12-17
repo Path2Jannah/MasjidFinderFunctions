@@ -18,7 +18,7 @@ import {Format, Locale, Timezone} from "./helper/DateEnums";
 import {validateSalaahHistoryRequest} from "./models/UpdateSalaahStatusRequest";
 import {isSalaahTimeLocationRequestBody} from "./models/request/SalaahTimeLocationRequest";
 import {HTTPType, validateHttpRequest} from "./helper/HTTPRequestType";
-import {createUniqueID} from "./helper/DateLocationID"
+import {createUniqueID} from "./helper/DateLocationID";
 import {HadithRequest} from "./HadithRequest";
 
 admin.initializeApp();
@@ -71,7 +71,7 @@ functions.https.onRequest(async (_req, res) => {
   const dateLocationID = createUniqueID(currentDate, "CT_ZA");
   const timesPath = "/CapeTown/Daily/Times";
   const datePath = "/CapeTown/Daily/Dates";
-  const idPath = "/CapeTown/Daily/"
+  const idPath = "/CapeTown/Daily/";
   salaahTimeRequests.getSalaahTimesDaily(currentDate, PredefinedLocations.CAPE_TOWN).
       then(async (response:SalaahTime) => {
         console.log("Success: ", response);
