@@ -77,7 +77,7 @@ functions.https.onRequest(async (_req, res) => {
         console.log("Success: ", response);
         const salaahTimes = response.data.timings;
         const dates = response.data.date;
-        const id = { dateLocationID }
+        const id = {dateLocationID};
         realtimeDatabaseService.addData(timesPath, salaahTimes);
         realtimeDatabaseService.addData(datePath, dates);
         realtimeDatabaseService.addData(idPath, id);
