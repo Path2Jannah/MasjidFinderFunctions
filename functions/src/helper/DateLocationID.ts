@@ -11,7 +11,7 @@ import {Buffer} from "buffer";
  * @return {string} The ID token.
  */
 export function createUniqueID(date: string, location: string): string {
-  const jsonStringToEncode = {"date": date, "location" : location };
+  const jsonStringToEncode = {"date": date, "location": location};
   const jsonString = JSON.stringify(jsonStringToEncode);
   const buffer = Buffer.from(jsonString, "utf-8");
   const encodedJsonString = buffer.toString("base64");
