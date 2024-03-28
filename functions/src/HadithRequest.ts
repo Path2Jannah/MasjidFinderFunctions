@@ -2,11 +2,9 @@
 /* eslint-disable require-jsdoc */
 /* eslint-disable max-len */
 
-import {delay} from "./helper/HTTPRequestType";
+import {delay} from "./utils/Wait";
 import * as fs from "fs";
 import {AxiosService} from "./services/AxiosService";
-import path from "path";
-import {AxiosResponse} from "axios";
 import {HadithMapper} from "./mappers/HadithMapper";
 
 interface JsonObject {
@@ -91,23 +89,23 @@ export class HadithRequest {
     }
   }
 
-  /**
-   * Returns all the scholars with associated hadith books.
-   * Used to querry subsequent requests.
-   * @returns
-   */
-  public async getScholarsWithBooks(): Promise<Array<string>> {
-    const allCollections = await this.getAllCollections();
+  // /**
+  //  * Returns all the scholars with associated hadith books.
+  //  * Used to querry subsequent requests.
+  //  * @returns
+  //  */
+  // public async getScholarsWithBooks(): Promise<Array<string>> {
+  //   const allCollections = await this.getAllCollections();
 
-    // We filter out malik and darimi manually because even though the `hasBooks` property is set to `true` when querrying the books it doesn't return anything.
-    const hasBooks = allCollections
-        .filter((collection) => collection.name !== "malik" && collection.name !== "darimi" && collection.hasBooks)
-        .map((collection) => collection.name);
+  //   // We filter out malik and darimi manually because even though the `hasBooks` property is set to `true` when querrying the books it doesn't return anything.
+  //   const hasBooks = allCollections
+  //       .filter((collection) => collection.name !== "malik" && collection.name !== "darimi" && collection.hasBooks)
+  //       .map((collection) => collection.name);
 
-    console.log(hasBooks);
+  //   console.log(hasBooks);
 
-    return hasBooks;
-  }
+  //   return hasBooks;
+  // }
 
   public async getBooksFromScholar(name: string): Promise<BookCollection[]> {
     const books: Array<Books> = [];
