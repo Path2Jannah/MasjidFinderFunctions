@@ -26,7 +26,7 @@ admin.initializeApp();
 const realtimeDatabase = admin.database();
 const firestoreDatabase = new admin.firestore.Firestore();
 const dateTimeHelper = new DateTimeHelper();
-const storage: Bucket = admin.storage().bucket();
+const storage: Bucket = new Storage().bucket();
 
 const salaahTimeRequests =
 new SalaahTimeRequests();
