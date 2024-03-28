@@ -63,9 +63,10 @@ new RealtimeDatabaseService(realtimeDatabase);
 export const getHadithBookFromStorage =
 functions.https.onRequest(async (req, res) => {
   try {
-    const bucketName = "gs://masjidfinder-bb912.appspot.com/Hadith Muslim";
+    const bucketName = "masjidfinder-bb912.appspot.com/Hadith Muslim/";
     const bookNumber = req.body.bookNumber;
     const fileName = `muslim_book${bookNumber}_hadiths.json`;
+    console.log(`Looking for ${fileName}`);
     const bucket = storage.bucket(bucketName);
     const file = bucket.file(fileName);
 
