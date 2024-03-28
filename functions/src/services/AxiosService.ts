@@ -88,8 +88,4 @@ export class AxiosService {
   }
 }
 
-enum SunnahApiErrorCodes {
-  NO_PAGE_FOUND = "ERR_BAD_REQUEST"
-}
-
 export default AxiosService;
