@@ -19,14 +19,14 @@ import {validateSalaahHistoryRequest} from "./models/UpdateSalaahStatusRequest";
 import {HTTPType, validateHttpRequest} from "./helper/HTTPRequestType";
 import {createUniqueID} from "./helper/DateLocationID";
 import {HadithRequest} from "./HadithRequest";
-import {Storage} from "@google-cloud/storage";
+import {Bucket} from "@google-cloud/storage";
 
 admin.initializeApp();
 // const googleMaps = new Client();
 const realtimeDatabase = admin.database();
 const firestoreDatabase = new admin.firestore.Firestore();
 const dateTimeHelper = new DateTimeHelper();
-const storage = new Storage();
+const storage: Bucket = admin.storage().bucket();
 
 const salaahTimeRequests =
 new SalaahTimeRequests();
@@ -63,12 +63,10 @@ new RealtimeDatabaseService(realtimeDatabase);
 export const getHadithBookFromStorage =
 functions.https.onRequest(async (req, res) => {
   try {
-    const bucketName = "masjidfinder-bb912.appspot.com/Hadith Muslim/";
     const bookNumber = req.body.bookNumber;
-    const fileName = `muslim_book${bookNumber}_hadiths.json`;
+    const fileName = `Hadith Muslim/muslim_book${bookNumber}_hadiths.json`;
     console.log(`Looking for ${fileName}`);
-    const bucket = storage.bucket(bucketName);
-    const file = bucket.file(fileName);
+    const file = storage.file(fileName);
 
     const [fileData] = await file.download();
 
