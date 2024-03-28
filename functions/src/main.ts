@@ -19,7 +19,7 @@ import {validateSalaahHistoryRequest} from "./models/UpdateSalaahStatusRequest";
 import {HTTPType, validateHttpRequest} from "./helper/HTTPRequestType";
 import {createUniqueID} from "./helper/DateLocationID";
 import {HadithRequest} from "./HadithRequest";
-import {Storage} from '@google-cloud/storage'
+import {Storage} from "@google-cloud/storage";
 
 admin.initializeApp();
 // const googleMaps = new Client();
