@@ -10,7 +10,8 @@ interface Hadith {
      */
     id: number,
     /**
-     * The ID of the chapter. This relates somewhat to the chapter number but shows the sub chapters.
+     * The ID of the chapter. This relates somewhat to
+     * the chapter number but shows the sub chapters.
      */
     chapterId: string
     /**

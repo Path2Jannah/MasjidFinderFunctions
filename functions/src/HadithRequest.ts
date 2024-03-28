@@ -2,12 +2,12 @@
 /* eslint-disable require-jsdoc */
 /* eslint-disable max-len */
 
-import { delay } from "./helper/HTTPRequestType";
+import {delay} from "./helper/HTTPRequestType";
 import * as fs from "fs";
-import { AxiosService } from "./services/AxiosService";
+import {AxiosService} from "./services/AxiosService";
 import path from "path";
-import { AxiosResponse } from "axios";
-import { HadithMapper } from "./mappers/HadithMapper";
+import {AxiosResponse} from "axios";
+import {HadithMapper} from "./mappers/HadithMapper";
 
 interface JsonObject {
   [key: string]: any;
@@ -16,13 +16,13 @@ interface JsonObject {
 function saveJsonToFile(jsonBlob: JsonObject, filePath: string): void {
   try {
     const jsonString = JSON.stringify(jsonBlob, null, 2); // 2 is the number of spaces for indentation
-    
+
     // Check if the file exists
     if (!fs.existsSync(filePath)) {
       // If the file doesn't exist, create it
-      fs.writeFileSync(filePath, '', { flag: 'wx' });
+      fs.writeFileSync(filePath, "", {flag: "wx"});
     }
-    
+
     // Write JSON data to the file
     fs.writeFileSync(filePath, jsonString);
     console.log(`JSON data saved to ${filePath}`);
@@ -33,16 +33,15 @@ function saveJsonToFile(jsonBlob: JsonObject, filePath: string): void {
 
 
 export class HadithRequest {
-
   // Create the instance of axios to use with the baseURL of "https://api.sunnah.com/v1/"
   private axiosService = new AxiosService("https://api.sunnah.com/v1/");
 
   // An instance of a mapper used for conversion between the response and wanted output.
-  private mapper = new HadithMapper()
+  private mapper = new HadithMapper();
 
   // API Key to use for requests to "https://api.sunnah.com/v1/" otherwise response will come back as { message: "Missing Authentication Token" }
   private headers = {
-      "X-API-Key": "SqD712P3E82xnwOAEOkGd5JZH8s9wRR24TqNFzjk",
+    "X-API-Key": "SqD712P3E82xnwOAEOkGd5JZH8s9wRR24TqNFzjk",
   };
 
   /**
@@ -55,7 +54,7 @@ export class HadithRequest {
   public async getRandomHadith(): Promise<HadithCollection> {
     try {
       const response = await this.axiosService.get("hadiths/random", this.headers);
-      
+
       console.log(await this.mapper.mapToHadith(response.data));
       return response.data as HadithCollection;
     } catch (error) {
@@ -69,25 +68,23 @@ export class HadithRequest {
   * @returns {Promise<CollectionInfo[]>} A Promise that resolves to an array of CollectionInfo.
   */
   public async getAllCollections(): Promise<Collections[]> {
-    let allCollections: CollectionInfo[] = []
+    const allCollections: CollectionInfo[] = [];
     try {
       const response = await this.axiosService.get("collections/", this.headers);
       response.data.data.forEach((collectionInfo: CollectionInfo) => {
-
         // Early escape for when 0 hadiths are available, we don't care about it anymore.
-        if(collectionInfo.totalAvailableHadith == 0) {
+        if (collectionInfo.totalAvailableHadith == 0) {
           return;
         }
 
         allCollections.push(collectionInfo);
-      })
+      });
 
       const result = this.mapper.mapToCollection(allCollections);
 
       saveJsonToFile(await result, "/home/yahya/projects/MasjidFinderFunctions/HadithdB/collections.json");
 
       return result;
-      
     } catch (error) {
       console.error("Error: ", error as string);
       throw error;
@@ -97,15 +94,15 @@ export class HadithRequest {
   /**
    * Returns all the scholars with associated hadith books.
    * Used to querry subsequent requests.
-   * @returns 
+   * @returns
    */
   public async getScholarsWithBooks(): Promise<Array<string>> {
     const allCollections = await this.getAllCollections();
 
     // We filter out malik and darimi manually because even though the `hasBooks` property is set to `true` when querrying the books it doesn't return anything.
     const hasBooks = allCollections
-      .filter(collection => collection.name !== "malik" && collection.name !== "darimi" && collection.hasBooks)
-      .map(collection => collection.name);
+        .filter((collection) => collection.name !== "malik" && collection.name !== "darimi" && collection.hasBooks)
+        .map((collection) => collection.name);
 
     console.log(hasBooks);
 
@@ -113,7 +110,6 @@ export class HadithRequest {
   }
 
   public async getBooksFromScholar(name: string): Promise<BookCollection[]> {
-
     const books: Array<Books> = [];
     try {
       let hasNextPage = true;
@@ -127,9 +123,9 @@ export class HadithRequest {
         };
 
         const response = await this.axiosService.get(
-          `collections/${name}/books/`,
-          this.headers,
-          querryParams,
+            `collections/${name}/books/`,
+            this.headers,
+            querryParams,
         );
 
         if (response.status == 403) {
@@ -171,9 +167,9 @@ export class HadithRequest {
         };
 
         const response = await this.axiosService.get(
-          `collections/${name}/books/${bookNumber}/hadiths`,
-          this.headers,
-          querryParams,
+            `collections/${name}/books/${bookNumber}/hadiths`,
+            this.headers,
+            querryParams,
         );
 
         if (response.status == 403) {

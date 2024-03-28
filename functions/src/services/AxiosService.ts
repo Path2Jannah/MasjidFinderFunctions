@@ -1,5 +1,6 @@
 /* eslint-disable valid-jsdoc */
 /* eslint-disable require-jsdoc */
+/* eslint-disable max-len */
 
 import axios, {AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse} from "axios";
 /**
@@ -51,9 +52,9 @@ export class AxiosService {
   }
 
   public async get(
-    url: string,
-    headers?: Record<string, string>,
-    querryParams?: Record<string, any>,
+      url: string,
+      headers?: Record<string, string>,
+      querryParams?: Record<string, any>,
   ): Promise<AxiosResponse> {
     try {
       // Merge query parameters into the config object
@@ -72,7 +73,7 @@ export class AxiosService {
       return response;
     } catch (error) {
       // Handle errors
-      console.error('Error in Axios GET request:', error);
+      console.error("Error in Axios GET request:", error);
       throw error;
     }
   }
@@ -88,7 +89,7 @@ export class AxiosService {
 }
 
 enum SunnahApiErrorCodes {
-  NO_PAGE_FOUND = 'ERR_BAD_REQUEST'
+  NO_PAGE_FOUND = "ERR_BAD_REQUEST"
 }
 
 export default AxiosService;

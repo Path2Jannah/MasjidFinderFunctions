@@ -60,7 +60,7 @@ new FirestoreService(firestoreDatabase, "masjid_cape_town");
 const realtimeDatabaseService =
 new RealtimeDatabaseService(realtimeDatabase);
 
-export const getHadithBookFromStorage = 
+export const getHadithBookFromStorage =
 functions.https.onRequest(async (req, res) => {
   try {
     const bucketName = "gs://masjidfinder-bb912.appspot.com/Hadith Muslim";
@@ -76,7 +76,7 @@ functions.https.onRequest(async (req, res) => {
     console.error("Error retrieving file:", error);
     res.status(500).send("Error retriving from Firebase Storage.");
   }
-})
+});
 
 /**
  * Admin level API that is triggered on a Google cloud schedular.

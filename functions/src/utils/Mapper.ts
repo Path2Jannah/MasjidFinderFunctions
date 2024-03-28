@@ -1,9 +1,10 @@
 
 /**
- * Interface for when we want to create an object that will act as a key value pair
- * 
- * Example: 
- * 
+ * Interface for when we want to create an object that will
+ * act as a key value pair.
+ *
+ * Example:
+ *
  * ```typescript
  * private map: StringToNumber = {
  *       "bukhari": 1,

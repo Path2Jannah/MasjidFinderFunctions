@@ -18,7 +18,3 @@ export enum HTTPType {
     GET = "GET",
     POST = "POST",
 }
-
-export function delay(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}

@@ -1,4 +1,5 @@
-// This defines all the models that will be exposed on the server and sent to the client.
+// This defines all the models that will be exposed
+// on the server and sent to the client.
 // Most of these are models of the response of the external APIs being used.
 
 interface HadithResponse {
