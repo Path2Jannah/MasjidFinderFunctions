@@ -1,16 +1,38 @@
-interface Hadith {
-    lang: string;
-    chapterNumber: string;
-    chapterTitle: string;
-    urn: number;
-    body: string;
-    grades: any[];
+
+
+interface Summary {
+    name: string,
+    collection: Collection[],
 }
 
-interface HadithCollection {
-    collection: string;
+interface Collection {
+    lang: string;
+    title: string;
+    shortIntro: string;
+}
+
+interface BookInfo {
+    lang: string;
+    name: string;
+  }
+
+interface Books {
     bookNumber: string;
-    chapterId: string;
-    hadithNumber: string;
-    hadith: Hadith[];
+    book: BookInfo[];
+    hadithStartNumber: number;
+    hadithEndNumber: number;
+    numberOfHadith: number;
+  }
+
+interface BooksResponse {
+    data: Books[];
+    total: number;
+    limit: number;
+    previous: null | string;
+    next: null | string;
+  }
+
+interface BooksRes {
+    data: Books[];
+    total: number;
 }

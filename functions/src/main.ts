@@ -26,6 +26,7 @@ admin.initializeApp();
 const realtimeDatabase = admin.database();
 const firestoreDatabase = new admin.firestore.Firestore();
 const dateTimeHelper = new DateTimeHelper();
+const storage = new Storage();
 
 const salaahTimeRequests =
 new SalaahTimeRequests();
@@ -58,6 +59,24 @@ new FirestoreService(firestoreDatabase, "masjid_cape_town");
 
 const realtimeDatabaseService =
 new RealtimeDatabaseService(realtimeDatabase);
+
+export const getHadithBookFromStorage = 
+functions.https.onRequest(async (req, res) => {
+  try {
+    const bucketName = "gs://masjidfinder-bb912.appspot.com/Hadith Muslim";
+    const bookNumber = req.body.bookNumber;
+    const fileName = `muslim_book${bookNumber}_hadiths.json`;
+    const bucket = storage.bucket(bucketName);
+    const file = bucket.file(fileName);
+
+    const [fileData] = await file.download();
+
+    res.status(200).send(fileData);
+  } catch (error) {
+    console.error("Error retrieving file:", error);
+    res.status(500).send("Error retriving from Firebase Storage.");
+  }
+})
 
 /**
  * Admin level API that is triggered on a Google cloud schedular.
@@ -130,6 +149,29 @@ functions.https.onRequest(async (req, res) => {
   res.status(200).send(sortedResults);
 });
 
+// export const SalaahTimesDaily =
+// functions.https.onRequest(async (req, res) => {
+//   if (isSalaahTimeLocationRequestBody(req.body)) {
+//     const requestBody = req.body;
+//     if (requestBody.location == undefined) {
+//       res.status(400).send(getErrorResponse("INVALID LOCATION"));
+//     } else {
+//       if (requestBody.source == "external") {
+//         const salaahTimes = await salaahTimeRequests.getSalaahTimesDaily(dateTimeHelper.getDate(Locale.SOUTH_AFRICA, Timezone.GMT_PLUS_2, Format.API_DATE), PredefinedLocations.CAPE_TOWN);
+//         res.status(200).send({successResponse, timings: salaahTimes.data.timings, date: salaahTimes.data.date.gregorian.date});
+//       } else if (requestBody.source == "internal") {
+//         const salaahTimes = await realtimeDatabaseService.getValue("/CapeTown/Daily/Times");
+//         const date = await realtimeDatabaseService.getValue("/CapeTown/Daily/Dates/gregorian/date");
+//         res.status(200).send({successResponse, timings: salaahTimes, date: date});
+//       } else {
+//         res.status(400).send(getErrorResponse("INVALID SOURCE"));
+//       }
+//     }
+//   } else {
+//     res.status(400).send(getErrorResponse("INVALID REQUEST"));
+//   }
+// });
+
 export const SalaahTimesDaily =
 functions.https.onRequest(async (req, res) => {
   if (isSalaahTimeLocationRequestBody(req.body)) {
@@ -156,7 +198,7 @@ functions.https.onRequest(async (req, res) => {
 export const getHadith =
 functions.https.onRequest(async (_, res) => {
   try {
-    const hadith = await hadithRequest.getHadith();
+    const hadith = await hadithRequest.getRandomHadith();
     res.status(200).send({hadith});
   } catch (error) {
     res.status(400).send(getErrorResponse("Something went wrong"));

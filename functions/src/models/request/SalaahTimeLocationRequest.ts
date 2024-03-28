@@ -1,6 +1,6 @@
 export interface SalaahTimeLocationRequest {
     location: string,
-    source: string
+    date: string
 }
 
 /**
@@ -13,6 +13,6 @@ export function isSalaahTimeLocationRequestBody(obj: any):
  obj is SalaahTimeLocationRequest {
   return (
     typeof obj.location === "string" &&
-    typeof obj.source === "string"
+    typeof obj.date === "string"
   );
 }
