@@ -19,14 +19,14 @@ import {validateSalaahHistoryRequest} from "./models/UpdateSalaahStatusRequest";
 import {HTTPType, validateHttpRequest} from "./helper/HTTPRequestType";
 import {createUniqueID} from "./helper/DateLocationID";
 import {HadithRequest} from "./HadithRequest";
-import {Bucket} from "@google-cloud/storage";
+import {Storage, Bucket} from "@google-cloud/storage";
 
 admin.initializeApp();
 // const googleMaps = new Client();
 const realtimeDatabase = admin.database();
 const firestoreDatabase = new admin.firestore.Firestore();
 const dateTimeHelper = new DateTimeHelper();
-const storage: Bucket = new Storage().bucket();
+const storage: Bucket = new Storage().bucket("gs://masjidfinder-bb912.appspot.com");
 
 const salaahTimeRequests =
 new SalaahTimeRequests();
