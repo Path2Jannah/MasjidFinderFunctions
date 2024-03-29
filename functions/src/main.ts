@@ -77,6 +77,22 @@ functions.https.onRequest(async (req, res) => {
   }
 });
 
+export const getHadithCollectionsFromStorage =
+functions.https.onRequest(async (req, res) => {
+  try {
+    const fileName = `hadith_collections.json`;
+    console.log(`Looking for ${fileName}`);
+    const file = storage.file(fileName);
+
+    const [fileData] = await file.download();
+
+    res.status(200).send(fileData);
+  } catch (error) {
+    console.error("Error retrieving file:", error);
+    res.status(500).send("Error retriving from Firebase Storage.");
+  }
+});
+
 /**
  * Admin level API that is triggered on a Google cloud schedular.
  *
