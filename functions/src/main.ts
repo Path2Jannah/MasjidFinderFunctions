@@ -80,7 +80,7 @@ functions.https.onRequest(async (req, res) => {
 export const getHadithCollectionsFromStorage =
 functions.https.onRequest(async (req, res) => {
   try {
-    const fileName = `hadith_collections.json`;
+    const fileName = "hadith_collections.json";
     console.log(`Looking for ${fileName}`);
     const file = storage.file(fileName);
 
