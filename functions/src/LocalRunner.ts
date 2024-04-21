@@ -1,19 +1,18 @@
-import {json} from "stream/consumers";
 import {HadithRequest} from "./HadithRequest"; // Adjust the path accordingly
 import * as fs from "fs";
 
-async function runGetCollectionsLocally() {
-  try {
-    const hadithRequest = new HadithRequest();
-    // hadithRequest.getBooksFromScholar("adab");
-    for (let i = 57; i < 58; i++) {
-      await hadithRequest.exportHadithFromBook("adab", i.toString());
-      await waitFor(7000);
-    }
-  } catch (error) {
-    console.error("Error running getCollections locally:", error);
-  }
-}
+// async function runGetCollectionsLocally() {
+//   try {
+//     const hadithRequest = new HadithRequest();
+//     // hadithRequest.getBooksFromScholar("adab");
+//     for (let i = 57; i < 58; i++) {
+//       await hadithRequest.exportHadithFromBook("adab", i.toString());
+//       await waitFor(7000);
+//     }
+//   } catch (error) {
+//     console.error("Error running getCollections locally:", error);
+//   }
+// }
 
 interface HadithCollection {
     id: number

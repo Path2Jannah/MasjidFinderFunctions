@@ -6,7 +6,6 @@ import {delay} from "./utils/Wait";
 import * as fs from "fs";
 import {AxiosService} from "./services/AxiosService";
 import {HadithMapper} from "./mappers/HadithMapper";
-import {v4 as uuidv4} from "uuid";
 import DateTimeHelper from "./helper/DateTimeHelper";
 import {Format, Locale} from "./helper/DateEnums";
 
@@ -84,10 +83,9 @@ export class HadithRequest {
       });
 
       const resultCollection = this.mapper.mapToCollection(allCollections);
-      const randomUUID = uuidv4();
       const currentDate = dateTimeHelper.getDate(Locale.SOUTH_AFRICA, "Africa/Johannesburg", Format.API_DATE);
       const jsonResult = {
-        listId: randomUUID,
+        listId: "randomUUID",
         date: currentDate,
         data: await resultCollection,
       };
