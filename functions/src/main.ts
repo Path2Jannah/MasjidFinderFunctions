@@ -21,7 +21,7 @@ import {createUniqueID} from "./helper/DateLocationID";
 import {HadithRequest} from "./HadithRequest";
 import {Storage, Bucket} from "@google-cloud/storage";
 import * as fs from "fs";
-import { error } from "console";
+import {error} from "console";
 
 admin.initializeApp();
 // const googleMaps = new Client();
@@ -91,27 +91,27 @@ functions.https.onRequest(async (req, res) => {
 
   const [fileData] = (await file.download()).toString();
 
-    // Parse the JSON data
-    try {
-      const jsonData : HadithCollectionJson = JSON.parse(fileData);
-      jsonData.data.forEach((hadith: HadithCollection) => {
-        const documentObject = {
-          name: hadith.name,
-          short_intro: hadith.shortIntro,
-          title: hadith.title,
-          total_hadith: hadith.totalHadith,
-        };
+  // Parse the JSON data
+  try {
+    const jsonData : HadithCollectionJson = JSON.parse(fileData);
+    jsonData.data.forEach((hadith: HadithCollection) => {
+      const documentObject = {
+        name: hadith.name,
+        short_intro: hadith.shortIntro,
+        title: hadith.title,
+        total_hadith: hadith.totalHadith,
+      };
 
-        const collectionId: string = hadith.id.toString();
+      const collectionId: string = hadith.id.toString();
 
-        hadithCollectionsdB.addDocumentWithID(collectionId, documentObject);
-      });
-      console.log(jsonData); // Your JSON object
-      res.send("Success").status(200);
-    } catch (err) {
-      console.error("Error parsing JSON:", err);
-      res.send(error.toString()).status(401);
-    }
+      hadithCollectionsdB.addDocumentWithID(collectionId, documentObject);
+    });
+    console.log(jsonData); // Your JSON object
+    res.send("Success").status(200);
+  } catch (err) {
+    console.error("Error parsing JSON:", err);
+    res.send(error.toString()).status(401);
+  }
 });
 
 export const getHadithBookFromStorage =
