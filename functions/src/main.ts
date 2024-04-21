@@ -112,7 +112,6 @@ functions.https.onRequest(async (req, res) => {
       console.error("Error parsing JSON:", err);
       res.send(error.toString()).status(401);
     }
-  });
 });
 
 export const getHadithBookFromStorage =
