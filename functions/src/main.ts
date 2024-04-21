@@ -20,7 +20,6 @@ import {HTTPType, validateHttpRequest} from "./helper/HTTPRequestType";
 import {createUniqueID} from "./helper/DateLocationID";
 import {HadithRequest} from "./HadithRequest";
 import {Storage, Bucket} from "@google-cloud/storage";
-import * as fs from "fs";
 import {error} from "console";
 
 admin.initializeApp();
