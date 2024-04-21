@@ -1,4 +1,4 @@
-import {HadithRequest} from "./HadithRequest"; // Adjust the path accordingly
+// import {HadithRequest} from "./HadithRequest"; // Adjust the path accordingly
 import * as fs from "fs";
 
 // async function runGetCollectionsLocally() {
@@ -60,8 +60,8 @@ async function parseJson() {
 }
 
 
-function waitFor(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+// function waitFor(ms: number): Promise<void> {
+//   return new Promise((resolve) => setTimeout(resolve, ms));
+// }
 
 parseJson();
