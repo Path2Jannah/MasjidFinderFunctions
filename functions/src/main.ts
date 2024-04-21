@@ -20,6 +20,7 @@ import {HTTPType, validateHttpRequest} from "./helper/HTTPRequestType";
 import {createUniqueID} from "./helper/DateLocationID";
 import {HadithRequest} from "./HadithRequest";
 import {Storage, Bucket} from "@google-cloud/storage";
+import * as fs from 'fs';
 
 admin.initializeApp();
 // const googleMaps = new Client();
@@ -57,8 +58,61 @@ new FirestoreService(firestoreDatabase, "user_registry");
 const masjiddB =
 new FirestoreService(firestoreDatabase, "masjid_cape_town");
 
+const hadith_collections = 
+new FirestoreService(firestoreDatabase, "/HadithCollection/ddfbd6e6-ecfa-4081-8bdd-adcf6335bcfc/HadithCompilers");
+
 const realtimeDatabaseService =
 new RealtimeDatabaseService(realtimeDatabase);
+
+interface HadithCollection {
+  id: number
+  name: string,
+  title: {
+      eng: string,
+      ar: string,
+  }
+  shortIntro: string,
+  totalHadith: number
+}
+
+interface HadithCollectionJson {
+  listId: string,
+  date: string,
+  data: [HadithCollection]
+}
+
+
+export const saveHadithCollections = 
+functions.https.onRequest(async (req, res) => {
+  const filePath = '../HadithdB/hadith_collections.json';
+
+  fs.readFile(filePath, 'utf8', (err, data) => {
+    if (err) {
+        console.error('Error reading JSON file:', err);
+        return;
+    }
+
+    // Parse the JSON data
+    try {
+        const jsonData : HadithCollectionJson = JSON.parse(data);
+        jsonData.data.forEach((hadith: HadithCollection) => {
+            const documentObject = {
+                name: hadith.name,
+                short_intro: hadith.shortIntro,
+                title: hadith.title,
+                total_hadith: hadith.totalHadith,
+            };
+
+            const collectionId: string = hadith.id.toString()
+
+            hadith_collections.addDocumentWithID(collectionId, documentObject)
+        })
+        console.log(jsonData); // Your JSON object
+    } catch (err) {
+        console.error('Error parsing JSON:', err);
+    }
+});
+});
 
 export const getHadithBookFromStorage =
 functions.https.onRequest(async (req, res) => {

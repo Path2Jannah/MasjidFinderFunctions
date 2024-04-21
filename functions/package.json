@@ -23,7 +23,8 @@
     "firebase-admin": "^10.0.2",
     "firebase-functions": "^3.23.0",
     "moment": "^2.29.4",
-    "moment-timezone": "^0.5.43"
+    "moment-timezone": "^0.5.43",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.12.0",

@@ -13,7 +13,7 @@ export class HadithMapper {
     "abudawud": 4,
     "tirmidhi": 5,
     "ibnmajah": 6,
-    "Muwatta Malik": 7,
+    "malik": 7,
     "ahmad": 8,
     "forty": 9,
     "riyadussalihin": 10,
