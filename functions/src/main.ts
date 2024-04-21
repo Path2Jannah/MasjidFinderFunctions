@@ -21,6 +21,7 @@ import {createUniqueID} from "./helper/DateLocationID";
 import {HadithRequest} from "./HadithRequest";
 import {Storage, Bucket} from "@google-cloud/storage";
 import * as fs from "fs";
+import { error } from "console";
 
 admin.initializeApp();
 // const googleMaps = new Client();
@@ -84,17 +85,15 @@ interface HadithCollectionJson {
 
 export const saveHadithCollections =
 functions.https.onRequest(async (req, res) => {
-  const filePath = "../HadithdB/hadith_collections.json";
+  const fileName = "hadith_collections.json";
+  console.log(`Looking for ${fileName}`);
+  const file = storage.file(fileName);
 
-  fs.readFile(filePath, "utf8", (err, data) => {
-    if (err) {
-      console.error("Error reading JSON file:", err);
-      return;
-    }
+  const [fileData] = (await file.download()).toString();
 
     // Parse the JSON data
     try {
-      const jsonData : HadithCollectionJson = JSON.parse(data);
+      const jsonData : HadithCollectionJson = JSON.parse(fileData);
       jsonData.data.forEach((hadith: HadithCollection) => {
         const documentObject = {
           name: hadith.name,
@@ -108,8 +107,10 @@ functions.https.onRequest(async (req, res) => {
         hadithCollectionsdB.addDocumentWithID(collectionId, documentObject);
       });
       console.log(jsonData); // Your JSON object
+      res.send("Success").status(200);
     } catch (err) {
       console.error("Error parsing JSON:", err);
+      res.send(error.toString()).status(401);
     }
   });
 });
