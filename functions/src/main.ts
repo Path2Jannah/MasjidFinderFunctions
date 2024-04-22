@@ -144,7 +144,7 @@ functions.https.onRequest(async (req, res) => {
       } else {
         const hadithBooks = `${hadith.name}_books.json`;
         const file = storage.file(hadithBooks);
-        const [fileData] = (await file.download());
+        const [fileData] = await file.download();
         const jsonData : [HadithBooksJson] = JSON.parse(fileData.toString());
 
         const firebaseCollection = new FirestoreService(firestoreDatabase, `/HadithCollection/ddfbd6e6-ecfa-4081-8bdd-adcf6335bcfc/HadithCompilers/${collectionId}/Books`);
@@ -163,7 +163,6 @@ functions.https.onRequest(async (req, res) => {
         });
       }
     });
-    console.log(jsonData); // Your JSON object
     res.send("Success").status(200);
   } catch (err) {
     console.error("Error parsing JSON:", err);

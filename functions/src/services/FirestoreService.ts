@@ -18,13 +18,14 @@ export class FirestoreService {
     return docRef.id;
   }
 
-  public async addDocumentWithID(documentId: string, document: FirebaseFirestore.DocumentData) {
+  public async addDocumentWithID(documentId: string, document: FirebaseFirestore.DocumentData): Promise<boolean> {
     const docRef = await this.collection.doc(documentId);
-    docRef.set(document).then(() => {
-      console.log("Success");
+    docRef.set(document).finally(() => {
+      return true;
     }).catch(() => {
-      console.error("Failed");
+      return false;
     });
+    return false;
   }
 
   // Get a document by its ID
