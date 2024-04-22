@@ -93,7 +93,7 @@ functions.https.onRequest(async (req, res) => {
   // Parse the JSON data
   try {
     const jsonData : HadithCollectionJson = JSON.parse(fileData.toString());
-    jsonData.data.forEach((hadith: HadithCollection) => {
+    jsonData.data.forEach(async (hadith: HadithCollection) => {
       const documentObject = {
         name: hadith.name,
         short_intro: hadith.shortIntro,
@@ -103,7 +103,7 @@ functions.https.onRequest(async (req, res) => {
 
       const collectionId: string = hadith.id.toString();
 
-      hadithCollectionsdB.addDocumentWithID(collectionId, documentObject);
+      await hadithCollectionsdB.addDocumentWithID(collectionId, documentObject);
     });
     console.log(jsonData); // Your JSON object
     res.send("Success").status(200);
