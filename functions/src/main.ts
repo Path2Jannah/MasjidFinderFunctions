@@ -158,7 +158,7 @@ export const saveHadithBooks = functions.https.onRequest(async (req, res) => {
           num_of_hadith: books.numberOfHadith,
         };
 
-        if(books.bookNumber == null) {
+        if (books.bookNumber == null) {
           continue;
         }
 
