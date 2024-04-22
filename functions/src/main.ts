@@ -125,53 +125,49 @@ functions.https.onRequest(async (req, res) => {
   }
 });
 
-export const saveHadithBooks =
-functions.https.onRequest(async (req, res) => {
-  const fileName = "hadith_collections.json";
-  let firebaseCollection: FirestoreService;
-  console.log(`Looking for ${fileName}`);
-  const file = storage.file(fileName);
-
-  const [fileData] = (await file.download());
-
-  // Parse the JSON data
+export const saveHadithBooks = functions.https.onRequest(async (req, res) => {
   try {
-    const jsonData : HadithCollectionJson = JSON.parse(fileData.toString());
+    const fileName = "hadith_collections.json";
+    const file = storage.file(fileName);
+    console.log(`Looking for ${fileName}`);
+    const [fileData] = await file.download();
+    const jsonData: HadithCollectionJson = JSON.parse(fileData.toString());
 
     console.log(jsonData.date);
 
-    jsonData.data.forEach(async (hadith: HadithCollection) => {
+    for (const hadith of jsonData.data) {
       const collectionId: string = hadith.id.toString();
-      if (collectionId == "7") {
-        // Ignore
-      } else {
-        const hadithBooks = `${hadith.name}_books.json`;
-        console.log(`book ${hadith.title.eng}`);
-        const file = storage.file(hadithBooks);
-        const [fileData] = await file.download();
-        const jsonData : [HadithBooksJson] = JSON.parse(fileData.toString());
-
-        firebaseCollection = new FirestoreService(firestoreDatabase, `/HadithCollection/ddfbd6e6-ecfa-4081-8bdd-adcf6335bcfc/HadithCompilers/${collectionId}/Books`);
-
-        jsonData.forEach(async (books) => {
-          const documentObject = {
-            book_name: books.bookName,
-            hadith_end: books.hadithEndNumber,
-            hadith_start: books.hadithStartNumber,
-            num_of_hadith: books.numberOfHadith,
-          };
-
-          const bookId: string = books.bookNumber.toString();
-
-          await firebaseCollection.addDocumentWithID(bookId, documentObject);
-          console.log(await firebaseCollection.addDocumentWithID(bookId, documentObject));
-        });
+      if (collectionId === "7") {
+        // Ignore collection with ID 7
+        continue;
       }
-    });
+
+      const hadithBooksFileName = `${hadith.name}_books.json`;
+      console.log(`Processing books for collection: ${hadith.title.eng}`);
+      const booksFile = storage.file(hadithBooksFileName);
+      const [booksFileData] = await booksFile.download();
+      const booksJsonData: HadithBooksJson[] = JSON.parse(booksFileData.toString());
+
+      const firebaseCollection = new FirestoreService(firestoreDatabase, `/HadithCollection/ddfbd6e6-ecfa-4081-8bdd-adcf6335bcfc/HadithCompilers/${collectionId}/Books`);
+
+      for (const books of booksJsonData) {
+        const documentObject = {
+          book_name: books.bookName,
+          hadith_end: books.hadithEndNumber,
+          hadith_start: books.hadithStartNumber,
+          num_of_hadith: books.numberOfHadith,
+        };
+
+        const bookId: string = books.bookNumber.toString();
+
+        await firebaseCollection.addDocumentWithID(bookId, documentObject);
+        console.log(`Added document for book ${bookId}`);
+      }
+    }
     res.send("Success").status(200);
   } catch (err) {
-    console.error("Error parsing JSON:", err);
-    res.send(error.toString()).status(401);
+    console.error("Error:", err);
+    res.status(500).send("Internal Server Error");
   }
 });
 
