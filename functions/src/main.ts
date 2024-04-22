@@ -158,6 +158,10 @@ export const saveHadithBooks = functions.https.onRequest(async (req, res) => {
           num_of_hadith: books.numberOfHadith,
         };
 
+        if(books.bookNumber == null) {
+          continue;
+        }
+
         const bookId: string = books.bookNumber.toString();
 
         await firebaseCollection.addDocumentWithID(bookId, documentObject);
