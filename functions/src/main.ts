@@ -128,6 +128,7 @@ functions.https.onRequest(async (req, res) => {
 export const saveHadithBooks =
 functions.https.onRequest(async (req, res) => {
   const fileName = "hadith_collections.json";
+  let firebaseCollection: FirestoreService;
   console.log(`Looking for ${fileName}`);
   const file = storage.file(fileName);
 
@@ -150,7 +151,7 @@ functions.https.onRequest(async (req, res) => {
         const [fileData] = await file.download();
         const jsonData : [HadithBooksJson] = JSON.parse(fileData.toString());
 
-        let firebaseCollection = new FirestoreService(firestoreDatabase, `/HadithCollection/ddfbd6e6-ecfa-4081-8bdd-adcf6335bcfc/HadithCompilers/${collectionId}/Books`);
+        firebaseCollection = new FirestoreService(firestoreDatabase, `/HadithCollection/ddfbd6e6-ecfa-4081-8bdd-adcf6335bcfc/HadithCompilers/${collectionId}/Books`);
 
         jsonData.forEach(async (books) => {
           const documentObject = {
