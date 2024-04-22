@@ -88,11 +88,11 @@ functions.https.onRequest(async (req, res) => {
   console.log(`Looking for ${fileName}`);
   const file = storage.file(fileName);
 
-  const [fileData] = (await file.download()).toString();
+  const [fileData] = (await file.download());
 
   // Parse the JSON data
   try {
-    const jsonData : HadithCollectionJson = JSON.parse(fileData);
+    const jsonData : HadithCollectionJson = JSON.parse(fileData.toString());
     jsonData.data.forEach((hadith: HadithCollection) => {
       const documentObject = {
         name: hadith.name,
