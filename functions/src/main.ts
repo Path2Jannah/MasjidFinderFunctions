@@ -145,23 +145,23 @@ functions.https.onRequest(async (req, res) => {
 
       const collectionId: string = hadith.id.toString();
       if (collectionId == "7") {
-        
+        // Ignore
       } else {
-      const firebaseCollection = new FirestoreService(firestoreDatabase, `/HadithCollection/ddfbd6e6-ecfa-4081-8bdd-adcf6335bcfc/HadithCompilers/${collectionId}/Books`);
+        const firebaseCollection = new FirestoreService(firestoreDatabase, `/HadithCollection/ddfbd6e6-ecfa-4081-8bdd-adcf6335bcfc/HadithCompilers/${collectionId}/Books`);
 
-      jsonData.forEach(async (books) => {
-        const documentObject = {
-          book_name: books.bookName,
-          hadith_end: books.hadithEndNumber,
-          hadith_start: books.hadithStartNumber,
-          num_of_hadith: books.numberOfHadith,
-        };
+        jsonData.forEach(async (books) => {
+          const documentObject = {
+            book_name: books.bookName,
+            hadith_end: books.hadithEndNumber,
+            hadith_start: books.hadithStartNumber,
+            num_of_hadith: books.numberOfHadith,
+          };
 
-        const bookId: string = books.bookNumber.toString();
+          const bookId: string = books.bookNumber.toString();
 
-        await firebaseCollection.addDocumentWithID(bookId, documentObject);
-      });
-    }
+          await firebaseCollection.addDocumentWithID(bookId, documentObject);
+        });
+      }
     });
     console.log(jsonData); // Your JSON object
     res.send("Success").status(200);
