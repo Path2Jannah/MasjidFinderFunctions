@@ -81,6 +81,18 @@ interface HadithCollectionJson {
   data: [HadithCollection]
 }
 
+interface HadithBooksJson {
+  id: number,
+  bookNumber: number,
+  bookName: {
+    eng: string,
+    ar: string,
+  },
+  numberOfHadith: number,
+  hadithStartNumber: number,
+  hadithEndNumber: number,
+}
+
 
 export const saveHadithCollections =
 functions.https.onRequest(async (req, res) => {
@@ -104,6 +116,48 @@ functions.https.onRequest(async (req, res) => {
       const collectionId: string = hadith.id.toString();
 
       await hadithCollectionsdB.addDocumentWithID(collectionId, documentObject);
+    });
+    console.log(jsonData); // Your JSON object
+    res.send("Success").status(200);
+  } catch (err) {
+    console.error("Error parsing JSON:", err);
+    res.send(error.toString()).status(401);
+  }
+});
+
+export const saveHadithBooks =
+functions.https.onRequest(async (req, res) => {
+  const fileName = "hadith_collections.json";
+  console.log(`Looking for ${fileName}`);
+  const file = storage.file(fileName);
+
+  const [fileData] = (await file.download());
+
+  // Parse the JSON data
+  try {
+    const jsonData : HadithCollectionJson = JSON.parse(fileData.toString());
+
+    jsonData.data.forEach(async (hadith: HadithCollection) => {
+      const hadithBooks = `${hadith.name}_books.json`;
+      const file = storage.file(hadithBooks);
+      const [fileData] = (await file.download());
+      const jsonData : [HadithBooksJson] = JSON.parse(fileData.toString());
+
+      const collectionId: string = hadith.id.toString();
+      const firebaseCollection = new FirestoreService(firestoreDatabase, `/HadithCollection/ddfbd6e6-ecfa-4081-8bdd-adcf6335bcfc/HadithCompilers/${collectionId}/Books`);
+
+      jsonData.forEach(async (books) => {
+        const documentObject = {
+          book_name: books.bookName,
+          hadith_end: books.hadithEndNumber,
+          hadith_start: books.hadithStartNumber,
+          num_of_hadith: books.numberOfHadith,
+        };
+
+        const bookId: string = books.bookNumber.toString();
+
+        await firebaseCollection.addDocumentWithID(bookId, documentObject);
+      });
     });
     console.log(jsonData); // Your JSON object
     res.send("Success").status(200);
