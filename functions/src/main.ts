@@ -138,15 +138,15 @@ functions.https.onRequest(async (req, res) => {
     const jsonData : HadithCollectionJson = JSON.parse(fileData.toString());
 
     jsonData.data.forEach(async (hadith: HadithCollection) => {
-      const hadithBooks = `${hadith.name}_books.json`;
-      const file = storage.file(hadithBooks);
-      const [fileData] = (await file.download());
-      const jsonData : [HadithBooksJson] = JSON.parse(fileData.toString());
-
       const collectionId: string = hadith.id.toString();
       if (collectionId == "7") {
         // Ignore
       } else {
+        const hadithBooks = `${hadith.name}_books.json`;
+        const file = storage.file(hadithBooks);
+        const [fileData] = (await file.download());
+        const jsonData : [HadithBooksJson] = JSON.parse(fileData.toString());
+    
         const firebaseCollection = new FirestoreService(firestoreDatabase, `/HadithCollection/ddfbd6e6-ecfa-4081-8bdd-adcf6335bcfc/HadithCompilers/${collectionId}/Books`);
 
         jsonData.forEach(async (books) => {
