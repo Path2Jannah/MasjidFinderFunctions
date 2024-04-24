@@ -18,6 +18,10 @@ export class FirestoreService {
     return docRef.id;
   }
 
+  getNewDocumentRef(documentId?: string) {
+    return documentId ? this.collection.doc(documentId) : this.collection.doc();
+  }
+
   public async addDocumentWithID(documentId: string, document: FirebaseFirestore.DocumentData): Promise<boolean> {
     const docRef = await this.collection.doc(documentId);
     docRef.set(document).finally(() => {

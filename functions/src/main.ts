@@ -188,42 +188,60 @@ export const saveHadithBooks = functions.https.onRequest(async (req, res) => {
   }
 });
 
-export const addBuhakriHadith =
-functions.https.onRequest(async (req, res) => {
+export const addBukhariHadith = functions.https.onRequest(async (req, res) => {
   try {
-    for (let i = 1; i <= 97; i++) {
-      const fileName = `Hadith Bukhari/bukhari_book${i}_hadiths.json`;
-      console.log(`Looking for ${fileName}`);
-      const file = storage.file(fileName);
-      const exist = await file.exists();
-      if (!exist) {
-        continue; // Move on to the next iteration
+      for (let i = 1; i <= 97; i++) {
+          const fileName = `Hadith Bukhari/bukhari_book${i}_hadiths.json`;
+          console.log(`Looking for ${fileName}`);
+
+          const file = storage.file(fileName);
+          const [exists] = await file.exists();
+
+          if (!exists) {
+              console.log(`File not found: ${fileName}`);
+              continue; // Move to the next iteration
+          }
+
+          console.log(`File found: ${fileName}`);
+
+          const [fileData] = await file.download();
+          const jsonData: HadithJson[] = JSON.parse(fileData.toString());
+
+          console.log(jsonData);
+
+          await processHadithData(jsonData, i);
+          console.log(`Hadith data processed for book ${i}`);
       }
-      console.log(`file found: ${file.name}`);
-      const [fileData] = await file.download();
-      const jsonData: HadithJson = JSON.parse(fileData.toString());
 
-      console.log(jsonData);
-
-      const firebaseCollection = new FirestoreService(firestoreDatabase, `/HadithCollection/ddfbd6e6-ecfa-4081-8bdd-adcf6335bcfc/HadithCompilers/1/Books/${i}/hadith`);
-      const documentObject = {
-        chapter_id: jsonData.chapterId,
-        chapter_num: jsonData.chapterNumber,
-        chapter_title: jsonData.chapterTitle,
-        text: {
-          ar: jsonData.text.arabic,
-          eng: jsonData.text.english,
-        },
-      };
-      await firebaseCollection.addDocumentWithID(jsonData.hadithNumber.toString(), documentObject);
-      console.log(`Added hadith for book ${i}`);
-    }
-    res.send("Success").status(200);
-  } catch (err) {
-    console.error("Error:", err);
-    res.status(500).send("Internal Server Error");
+      res.status(200).send("Success");
+  } catch (error) {
+      console.error("Error:", error);
+      res.status(500).send("Internal Server Error");
   }
 });
+
+async function processHadithData(hadithData: HadithJson[], bookNumber: number) {
+  const firebaseCollection = new FirestoreService(firestoreDatabase, `/HadithCollection/ddfbd6e6-ecfa-4081-8bdd-adcf6335bcfc/HadithCompilers/1/Books/${bookNumber}/hadith`);
+
+  const batch = firestoreDatabase.batch();
+
+  hadithData.forEach((hadith) => {
+      const documentObject = {
+          chapter_id: hadith.chapterId,
+          chapter_num: hadith.chapterNumber,
+          chapter_title: hadith.chapterTitle,
+          text: {
+              ar: hadith.text.arabic,
+              eng: hadith.text.english,
+          },
+      };
+
+      const documentRef = firebaseCollection.getNewDocumentRef(hadith.hadithNumber.toString());
+      batch.set(documentRef, documentObject);
+  });
+
+  await batch.commit();
+}
 
 export const getHadithBookFromStorage =
 functions.https.onRequest(async (req, res) => {
