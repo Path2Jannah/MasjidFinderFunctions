@@ -21,6 +21,7 @@ import {createUniqueID} from "./helper/DateLocationID";
 import {HadithRequest} from "./HadithRequest";
 import {Storage, Bucket} from "@google-cloud/storage";
 import {error} from "console";
+import {text} from "stream/consumers";
 
 admin.initializeApp();
 // const googleMaps = new Client();
@@ -28,6 +29,7 @@ const realtimeDatabase = admin.database();
 const firestoreDatabase = new admin.firestore.Firestore();
 const dateTimeHelper = new DateTimeHelper();
 const storage: Bucket = new Storage().bucket("gs://masjidfinder-bb912.appspot.com");
+const bukhariStorage: Bucket = new Storage().bucket("gs://masjidfinder-bb912.appspot.com/Hadith Bukhari");
 
 const salaahTimeRequests =
 new SalaahTimeRequests();
@@ -79,6 +81,19 @@ interface HadithCollectionJson {
   listId: string,
   date: string,
   data: [HadithCollection]
+}
+
+interface HadithJson {
+  id: string,
+  chapterId: string,
+  chapterTitle: string,
+  chapterNumber: string,
+  bookNumber: number,
+  hadithNumber: string,
+  text: {
+    english: string,
+    arabic: string,
+  }
 }
 
 interface HadithBooksJson {
@@ -167,6 +182,40 @@ export const saveHadithBooks = functions.https.onRequest(async (req, res) => {
         await firebaseCollection.addDocumentWithID(bookId, documentObject);
         console.log(`Added document for book ${bookId}`);
       }
+    }
+    res.send("Success").status(200);
+  } catch (err) {
+    console.error("Error:", err);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+export const addBuhakriHadith =
+functions.https.onRequest(async (req, res) => {
+  try {
+    for (let i = 1; i <= 97; i++) {
+      const fileName = `bukhari_book${i}_hadiths.json`;
+      console.log(`Looking for ${fileName}`);
+      const file = bukhariStorage.file(fileName);
+      if (!(await file.exists())) {
+        continue; // Move on to the next iteration
+      }
+      console.log(`file found: ${file.name}`);
+      const [fileData] = await file.download();
+      const jsonData: HadithJson = JSON.parse(fileData.toString());
+
+      const firebaseCollection = new FirestoreService(firestoreDatabase, `/HadithCollection/ddfbd6e6-ecfa-4081-8bdd-adcf6335bcfc/HadithCompilers/1/Books/1/hadith/${i}`);
+      const documentObject = {
+        chapter_id: jsonData.chapterId,
+        chapter_num: jsonData.chapterNumber,
+        chapter_title: jsonData.chapterTitle,
+        text: {
+          ar: jsonData.text.arabic,
+          eng: jsonData.text.english,
+        },
+      };
+      await firebaseCollection.addDocumentWithID(i.toString(), documentObject);
+      console.log(`Added hadith for book ${i}`);
     }
     res.send("Success").status(200);
   } catch (err) {
