@@ -203,7 +203,7 @@ functions.https.onRequest(async (req, res) => {
       const [fileData] = await file.download();
       const jsonData: HadithJson = JSON.parse(fileData.toString());
 
-      const firebaseCollection = new FirestoreService(firestoreDatabase, `/HadithCollection/ddfbd6e6-ecfa-4081-8bdd-adcf6335bcfc/HadithCompilers/1/Books/1/hadith/${i}`);
+      const firebaseCollection = new FirestoreService(firestoreDatabase, `/HadithCollection/ddfbd6e6-ecfa-4081-8bdd-adcf6335bcfc/HadithCompilers/1/Books/1/hadith/${i}/`);
       const documentObject = {
         chapter_id: jsonData.chapterId,
         chapter_num: jsonData.chapterNumber,
