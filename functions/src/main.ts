@@ -28,7 +28,7 @@ const realtimeDatabase = admin.database();
 const firestoreDatabase = new admin.firestore.Firestore();
 const dateTimeHelper = new DateTimeHelper();
 const storage: Bucket = new Storage().bucket("gs://masjidfinder-bb912.appspot.com");
-const bukhariStorage: Bucket = new Storage().bucket("gs://masjidfinder-bb912.appspot.com/Hadith Bukhari");
+const bukhariStorage: Bucket = new Storage().bucket("gs://masjidfinder-bb912.appspot.com").file("Hadith Bukhari");
 
 const salaahTimeRequests =
 new SalaahTimeRequests();
@@ -196,7 +196,8 @@ functions.https.onRequest(async (req, res) => {
       const fileName = `bukhari_book${i}_hadiths.json`;
       console.log(`Looking for ${fileName}`);
       const file = bukhariStorage.file(fileName);
-      if (!(await file.exists())) {
+      const exist = await file.exists();
+      if (!exist) {
         continue; // Move on to the next iteration
       }
       console.log(`file found: ${file.name}`);
