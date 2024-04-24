@@ -21,7 +21,6 @@ import {createUniqueID} from "./helper/DateLocationID";
 import {HadithRequest} from "./HadithRequest";
 import {Storage, Bucket} from "@google-cloud/storage";
 import {error} from "console";
-import {text} from "stream/consumers";
 
 admin.initializeApp();
 // const googleMaps = new Client();
