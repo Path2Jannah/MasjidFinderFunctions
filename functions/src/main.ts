@@ -190,33 +190,33 @@ export const saveHadithBooks = functions.https.onRequest(async (req, res) => {
 
 export const addBukhariHadith = functions.https.onRequest(async (req, res) => {
   try {
-      for (let i = 1; i <= 97; i++) {
-          const fileName = `Hadith Bukhari/bukhari_book${i}_hadiths.json`;
-          console.log(`Looking for ${fileName}`);
+    for (let i = 1; i <= 97; i++) {
+      const fileName = `Hadith Bukhari/bukhari_book${i}_hadiths.json`;
+      console.log(`Looking for ${fileName}`);
 
-          const file = storage.file(fileName);
-          const [exists] = await file.exists();
+      const file = storage.file(fileName);
+      const [exists] = await file.exists();
 
-          if (!exists) {
-              console.log(`File not found: ${fileName}`);
-              continue; // Move to the next iteration
-          }
-
-          console.log(`File found: ${fileName}`);
-
-          const [fileData] = await file.download();
-          const jsonData: HadithJson[] = JSON.parse(fileData.toString());
-
-          console.log(jsonData);
-
-          await processHadithData(jsonData, i);
-          console.log(`Hadith data processed for book ${i}`);
+      if (!exists) {
+        console.log(`File not found: ${fileName}`);
+        continue; // Move to the next iteration
       }
 
-      res.status(200).send("Success");
+      console.log(`File found: ${fileName}`);
+
+      const [fileData] = await file.download();
+      const jsonData: HadithJson[] = JSON.parse(fileData.toString());
+
+      console.log(jsonData);
+
+      await processHadithData(jsonData, i);
+      console.log(`Hadith data processed for book ${i}`);
+    }
+
+    res.status(200).send("Success");
   } catch (error) {
-      console.error("Error:", error);
-      res.status(500).send("Internal Server Error");
+    console.error("Error:", error);
+    res.status(500).send("Internal Server Error");
   }
 });
 
@@ -226,18 +226,18 @@ async function processHadithData(hadithData: HadithJson[], bookNumber: number) {
   const batch = firestoreDatabase.batch();
 
   hadithData.forEach((hadith) => {
-      const documentObject = {
-          chapter_id: hadith.chapterId,
-          chapter_num: hadith.chapterNumber,
-          chapter_title: hadith.chapterTitle,
-          text: {
-              ar: hadith.text.arabic,
-              eng: hadith.text.english,
-          },
-      };
+    const documentObject = {
+      chapter_id: hadith.chapterId,
+      chapter_num: hadith.chapterNumber,
+      chapter_title: hadith.chapterTitle,
+      text: {
+        ar: hadith.text.arabic,
+        eng: hadith.text.english,
+      },
+    };
 
-      const documentRef = firebaseCollection.getNewDocumentRef(hadith.hadithNumber.toString());
-      batch.set(documentRef, documentObject);
+    const documentRef = firebaseCollection.getNewDocumentRef(hadith.hadithNumber.toString());
+    batch.set(documentRef, documentObject);
   });
 
   await batch.commit();
