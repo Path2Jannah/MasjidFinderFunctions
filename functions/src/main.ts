@@ -192,7 +192,7 @@ export const addBuhakriHadith =
 functions.https.onRequest(async (req, res) => {
   try {
     for (let i = 1; i <= 97; i++) {
-      const fileName = `Hadith Bukhari/bukhari_book${i}_hadiths.json`;
+      const fileName = `/Hadith Bukhari/bukhari_book${i}_hadiths.json`;
       console.log(`Looking for ${fileName}`);
       const file = storage.file(fileName);
       const exist = await file.exists();
