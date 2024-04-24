@@ -192,7 +192,7 @@ export const addBuhakriHadith =
 functions.https.onRequest(async (req, res) => {
   try {
     for (let i = 1; i <= 97; i++) {
-      const fileName = `/Hadith Bukhari/bukhari_book${i}_hadiths.json`;
+      const fileName = `Hadith Bukhari/bukhari_book${i}_hadiths.json`;
       console.log(`Looking for ${fileName}`);
       const file = storage.file(fileName);
       const exist = await file.exists();
@@ -203,7 +203,7 @@ functions.https.onRequest(async (req, res) => {
       const [fileData] = await file.download();
       const jsonData: HadithJson = JSON.parse(fileData.toString());
 
-      const firebaseCollection = new FirestoreService(firestoreDatabase, `HadithCollection/ddfbd6e6-ecfa-4081-8bdd-adcf6335bcfc/HadithCompilers/1/Books/${i}/hadith`);
+      const firebaseCollection = new FirestoreService(firestoreDatabase, `/HadithCollection/ddfbd6e6-ecfa-4081-8bdd-adcf6335bcfc/HadithCompilers/1/Books/${i}/hadith`);
       const documentObject = {
         chapter_id: jsonData.chapterId,
         chapter_num: jsonData.chapterNumber,
