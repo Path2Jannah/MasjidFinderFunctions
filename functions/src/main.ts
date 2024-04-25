@@ -209,7 +209,7 @@ export const addBukhariHadith = functions.https.onRequest(async (req, res) => {
 
       console.log(jsonData);
 
-      await processHadithData(jsonData, i);
+      await processHadithData(1, jsonData, i);
       console.log(`Hadith data processed for book ${i}`);
     }
 
@@ -220,8 +220,392 @@ export const addBukhariHadith = functions.https.onRequest(async (req, res) => {
   }
 });
 
-async function processHadithData(hadithData: HadithJson[], bookNumber: number) {
-  const firebaseCollection = new FirestoreService(firestoreDatabase, `/HadithCollection/ddfbd6e6-ecfa-4081-8bdd-adcf6335bcfc/HadithCompilers/1/Books/${bookNumber}/hadith`);
+export const addMuslimHadith = functions.https.onRequest(async (req, res) => {
+  try {
+    for (let i = 1; i <= 56; i++) {
+      const fileName = `Hadith Muslim/muslim_book${i}_hadiths.json`;
+      console.log(`Looking for ${fileName}`);
+
+      const file = storage.file(fileName);
+      const [exists] = await file.exists();
+
+      if (!exists) {
+        console.log(`File not found: ${fileName}`);
+        continue; // Move to the next iteration
+      }
+
+      console.log(`File found: ${fileName}`);
+
+      const [fileData] = await file.download();
+      const jsonData: HadithJson[] = JSON.parse(fileData.toString());
+
+      console.log(jsonData);
+
+      await processHadithData(2, jsonData, i);
+      console.log(`Hadith data processed for book ${i}`);
+    }
+
+    res.status(200).send("Success");
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+export const addNasaiHadith = functions.https.onRequest(async (req, res) => {
+  try {
+    for (let i = 1; i <= 51; i++) {
+      const fileName = `Hadith Nasai/nasai_book${i}_hadiths.json`;
+      console.log(`Looking for ${fileName}`);
+
+      const file = storage.file(fileName);
+      const [exists] = await file.exists();
+
+      if (!exists) {
+        console.log(`File not found: ${fileName}`);
+        continue; // Move to the next iteration
+      }
+
+      console.log(`File found: ${fileName}`);
+
+      const [fileData] = await file.download();
+      const jsonData: HadithJson[] = JSON.parse(fileData.toString());
+
+      console.log(jsonData);
+
+      await processHadithData(3, jsonData, i);
+      console.log(`Hadith data processed for book ${i}`);
+    }
+
+    res.status(200).send("Success");
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+export const addAbudawudHadith = functions.https.onRequest(async (req, res) => {
+  try {
+    for (let i = 1; i <= 43; i++) {
+      const fileName = `Hadith Abudawud/abudawud_book${i}_hadiths.json`;
+      console.log(`Looking for ${fileName}`);
+
+      const file = storage.file(fileName);
+      const [exists] = await file.exists();
+
+      if (!exists) {
+        console.log(`File not found: ${fileName}`);
+        continue; // Move to the next iteration
+      }
+
+      console.log(`File found: ${fileName}`);
+
+      const [fileData] = await file.download();
+      const jsonData: HadithJson[] = JSON.parse(fileData.toString());
+
+      console.log(jsonData);
+
+      await processHadithData(4, jsonData, i);
+      console.log(`Hadith data processed for book ${i}`);
+    }
+
+    res.status(200).send("Success");
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+export const addIbnmajahHadith = functions.https.onRequest(async (req, res) => {
+  try {
+    for (let i = 1; i <= 37; i++) {
+      const fileName = `Hadith Ibnmajah/ibnmajah_book${i}_hadiths.json`;
+      console.log(`Looking for ${fileName}`);
+
+      const file = storage.file(fileName);
+      const [exists] = await file.exists();
+
+      if (!exists) {
+        console.log(`File not found: ${fileName}`);
+        continue; // Move to the next iteration
+      }
+
+      console.log(`File found: ${fileName}`);
+
+      const [fileData] = await file.download();
+      const jsonData: HadithJson[] = JSON.parse(fileData.toString());
+
+      console.log(jsonData);
+
+      await processHadithData(6, jsonData, i);
+      console.log(`Hadith data processed for book ${i}`);
+    }
+
+    res.status(200).send("Success");
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+export const addTirmidhiHadith = functions.https.onRequest(async (req, res) => {
+  try {
+    for (let i = 1; i <= 49; i++) {
+      const fileName = `Hadith Tirmidhi/tirmidhi_book${i}_hadiths.json`;
+      console.log(`Looking for ${fileName}`);
+
+      const file = storage.file(fileName);
+      const [exists] = await file.exists();
+
+      if (!exists) {
+        console.log(`File not found: ${fileName}`);
+        continue; // Move to the next iteration
+      }
+
+      console.log(`File found: ${fileName}`);
+
+      const [fileData] = await file.download();
+      const jsonData: HadithJson[] = JSON.parse(fileData.toString());
+
+      console.log(jsonData);
+
+      await processHadithData(5, jsonData, i);
+      console.log(`Hadith data processed for book ${i}`);
+    }
+
+    res.status(200).send("Success");
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+export const addAhmadHadith = functions.https.onRequest(async (req, res) => {
+  try {
+    for (let i = 1; i <= 7; i++) {
+      const fileName = `Hadith Ahmad/ahmad_book${i}_hadiths.json`;
+      console.log(`Looking for ${fileName}`);
+
+      const file = storage.file(fileName);
+      const [exists] = await file.exists();
+
+      if (!exists) {
+        console.log(`File not found: ${fileName}`);
+        continue; // Move to the next iteration
+      }
+
+      console.log(`File found: ${fileName}`);
+
+      const [fileData] = await file.download();
+      const jsonData: HadithJson[] = JSON.parse(fileData.toString());
+
+      console.log(jsonData);
+
+      await processHadithData(8, jsonData, i);
+      console.log(`Hadith data processed for book ${i}`);
+    }
+
+    res.status(200).send("Success");
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+export const addFortyHadith = functions.https.onRequest(async (req, res) => {
+  try {
+    for (let i = 1; i <= 3; i++) {
+      const fileName = `Hadith Forty/forty_book${i}_hadiths.json`;
+      console.log(`Looking for ${fileName}`);
+
+      const file = storage.file(fileName);
+      const [exists] = await file.exists();
+
+      if (!exists) {
+        console.log(`File not found: ${fileName}`);
+        continue; // Move to the next iteration
+      }
+
+      console.log(`File found: ${fileName}`);
+
+      const [fileData] = await file.download();
+      const jsonData: HadithJson[] = JSON.parse(fileData.toString());
+
+      console.log(jsonData);
+
+      await processHadithData(9, jsonData, i);
+      console.log(`Hadith data processed for book ${i}`);
+    }
+
+    res.status(200).send("Success");
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+export const addRiyadussalihinHadith = functions.https.onRequest(async (req, res) => {
+  try {
+    for (let i = 1; i <= 19; i++) {
+      const fileName = `Hadith Riyadussalihin/riyadussalihin_book${i}_hadiths.json`;
+      console.log(`Looking for ${fileName}`);
+
+      const file = storage.file(fileName);
+      const [exists] = await file.exists();
+
+      if (!exists) {
+        console.log(`File not found: ${fileName}`);
+        continue; // Move to the next iteration
+      }
+
+      console.log(`File found: ${fileName}`);
+
+      const [fileData] = await file.download();
+      const jsonData: HadithJson[] = JSON.parse(fileData.toString());
+
+      console.log(jsonData);
+
+      await processHadithData(10, jsonData, i);
+      console.log(`Hadith data processed for book ${i}`);
+    }
+
+    res.status(200).send("Success");
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+export const addMishkatHadith = functions.https.onRequest(async (req, res) => {
+  try {
+    for (let i = 1; i <= 24; i++) {
+      const fileName = `Hadith Mishkat/mishkat_book${i}_hadiths.json`;
+      console.log(`Looking for ${fileName}`);
+
+      const file = storage.file(fileName);
+      const [exists] = await file.exists();
+
+      if (!exists) {
+        console.log(`File not found: ${fileName}`);
+        continue; // Move to the next iteration
+      }
+
+      console.log(`File found: ${fileName}`);
+
+      const [fileData] = await file.download();
+      const jsonData: HadithJson[] = JSON.parse(fileData.toString());
+
+      console.log(jsonData);
+
+      await processHadithData(11, jsonData, i);
+      console.log(`Hadith data processed for book ${i}`);
+    }
+
+    res.status(200).send("Success");
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+export const addAdabHadith = functions.https.onRequest(async (req, res) => {
+  try {
+    for (let i = 1; i <= 57; i++) {
+      const fileName = `Hadith Adab/adab_book${i}_hadiths.json`;
+      console.log(`Looking for ${fileName}`);
+
+      const file = storage.file(fileName);
+      const [exists] = await file.exists();
+
+      if (!exists) {
+        console.log(`File not found: ${fileName}`);
+        continue; // Move to the next iteration
+      }
+
+      console.log(`File found: ${fileName}`);
+
+      const [fileData] = await file.download();
+      const jsonData: HadithJson[] = JSON.parse(fileData.toString());
+
+      console.log(jsonData);
+
+      await processHadithData(12, jsonData, i);
+      console.log(`Hadith data processed for book ${i}`);
+    }
+
+    res.status(200).send("Success");
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+export const addShamailHadith = functions.https.onRequest(async (req, res) => {
+  try {
+    for (let i = 1; i <= 56; i++) {
+      const fileName = `Hadith Shamail/shamail_book${i}_hadiths.json`;
+      console.log(`Looking for ${fileName}`);
+
+      const file = storage.file(fileName);
+      const [exists] = await file.exists();
+
+      if (!exists) {
+        console.log(`File not found: ${fileName}`);
+        continue; // Move to the next iteration
+      }
+
+      console.log(`File found: ${fileName}`);
+
+      const [fileData] = await file.download();
+      const jsonData: HadithJson[] = JSON.parse(fileData.toString());
+
+      console.log(jsonData);
+
+      await processHadithData(13, jsonData, i);
+      console.log(`Hadith data processed for book ${i}`);
+    }
+
+    res.status(200).send("Success");
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+export const addBulughHadith = functions.https.onRequest(async (req, res) => {
+  try {
+    for (let i = 1; i <= 14; i++) {
+      const fileName = `Hadith Bulugh/bulugh_book${i}_hadiths.json`;
+      console.log(`Looking for ${fileName}`);
+
+      const file = storage.file(fileName);
+      const [exists] = await file.exists();
+
+      if (!exists) {
+        console.log(`File not found: ${fileName}`);
+        continue; // Move to the next iteration
+      }
+
+      console.log(`File found: ${fileName}`);
+
+      const [fileData] = await file.download();
+      const jsonData: HadithJson[] = JSON.parse(fileData.toString());
+
+      console.log(jsonData);
+
+      await processHadithData(14, jsonData, i);
+      console.log(`Hadith data processed for book ${i}`);
+    }
+
+    res.status(200).send("Success");
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+async function processHadithData(scholarId: number, hadithData: HadithJson[], bookNumber: number) {
+  const firebaseCollection = new FirestoreService(firestoreDatabase, `/HadithCollection/ddfbd6e6-ecfa-4081-8bdd-adcf6335bcfc/HadithCompilers/${scholarId}/Books/${bookNumber}/hadith`);
 
   const batch = firestoreDatabase.batch();
 
