@@ -239,8 +239,6 @@ export const addMuslimHadith = functions.https.onRequest(async (req, res) => {
       const [fileData] = await file.download();
       const jsonData: HadithJson[] = JSON.parse(fileData.toString());
 
-      console.log(jsonData);
-
       await processHadithData(2, jsonData, i);
       console.log(`Hadith data processed for book ${i}`);
     }
@@ -620,7 +618,9 @@ async function processHadithData(scholarId: number, hadithData: HadithJson[], bo
       },
     };
 
-    const documentRef = firebaseCollection.getNewDocumentRef(hadith.hadithNumber.toString());
+    const hadithNumberAsDocumentString = hadith.hadithNumber.toString().replace(/\//g, "_");
+
+    const documentRef = firebaseCollection.getNewDocumentRef(hadithNumberAsDocumentString);
     batch.set(documentRef, documentObject);
   });
 
