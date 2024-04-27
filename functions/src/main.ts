@@ -106,6 +106,10 @@ interface HadithBooksJson {
   hadithEndNumber: number,
 }
 
+export const testString = 
+functions.https.onRequest(async (req, res) => {
+  res.send(req.body.text).status(200);
+})
 
 export const saveHadithCollections =
 functions.https.onRequest(async (req, res) => {
