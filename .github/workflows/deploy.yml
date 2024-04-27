@@ -34,8 +34,8 @@ jobs:
       - name: Restore Cached Node modules
         uses: actions/cache@v3
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/functions/package-lock.json') }}
+          path: node_modules
+          key: ${{ runner.os }}-node-
       - name: Lint code
         run: |
           cd functions;
