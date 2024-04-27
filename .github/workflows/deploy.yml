@@ -38,6 +38,7 @@ jobs:
       - name: Lint code
         run: |
           cd functions;
+          npm ls;
           npm run lint;
 
   deploy:
