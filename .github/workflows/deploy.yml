@@ -16,10 +16,11 @@ jobs:
         run: 
             cd functions;
             npm ci;
+            ls;
       - name: Cache Node modules
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
-          path: ~/.npm
+          path: node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('**/functions/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
@@ -31,7 +32,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Restore Cached Node modules
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/functions/package-lock.json') }}
@@ -47,7 +48,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Restore Cached Node modules
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/functions/package-lock.json') }}
