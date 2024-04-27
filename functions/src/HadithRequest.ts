@@ -3,36 +3,13 @@
 /* eslint-disable max-len */
 
 import {delay} from "./utils/Wait";
-import * as fs from "fs";
 import {AxiosService} from "./services/AxiosService";
 import {HadithMapper} from "./mappers/HadithMapper";
 import DateTimeHelper from "./helper/DateTimeHelper";
 import {Format, Locale} from "./helper/DateEnums";
-
-interface JsonObject {
-  [key: string]: any;
-}
+import { saveJsonToFile } from "./helper/SaveJson";
 
 const dateTimeHelper = new DateTimeHelper();
-
-function saveJsonToFile(jsonBlob: JsonObject, filePath: string): void {
-  try {
-    const jsonString = JSON.stringify(jsonBlob, null, 2); // 2 is the number of spaces for indentation
-
-    // Check if the file exists
-    if (!fs.existsSync(filePath)) {
-      // If the file doesn't exist, create it
-      fs.writeFileSync(filePath, "", {flag: "wx"});
-    }
-
-    // Write JSON data to the file
-    fs.writeFileSync(filePath, jsonString);
-    console.log(`JSON data saved to ${filePath}`);
-  } catch (error) {
-    console.error(`Error saving JSON data to ${filePath}:`, error);
-  }
-}
-
 
 export class HadithRequest {
   // Create the instance of axios to use with the baseURL of "https://api.sunnah.com/v1/"

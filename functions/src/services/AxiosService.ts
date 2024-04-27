@@ -51,7 +51,7 @@ export class AxiosService {
     return error;
   }
 
-  public async get(
+  async get(
       url: string,
       headers?: Record<string, string>,
       querryParams?: Record<string, any>,
@@ -78,7 +78,7 @@ export class AxiosService {
     }
   }
 
-  public async post<T>(
+  async post<T>(
       url: string,
       data?: any,
       config?: AxiosRequestConfig

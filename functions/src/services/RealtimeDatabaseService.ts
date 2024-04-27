@@ -17,7 +17,7 @@ export class RealtimeDatabaseService {
    * @param path {string} The specified path in the dB.
    * @param data {any} The data that needs to be added to the dB
    */
-  public async addData(path: string, data: any) {
+  async addData(path: string, data: any) {
     if (await this.isPathPopulated(path)) {
       this.updateValue(path, data);
     } else {
@@ -25,7 +25,7 @@ export class RealtimeDatabaseService {
     }
   }
 
-  public async getValue(path: string): Promise<any> {
+  async getValue(path: string): Promise<any> {
     try {
       const snapshot = await this.database.ref(path).once("value");
       return snapshot.val();
@@ -35,7 +35,7 @@ export class RealtimeDatabaseService {
     }
   }
 
-  public async setValue(path: string, value: any): Promise<void> {
+  async setValue(path: string, value: any): Promise<void> {
     try {
       await this.database.ref(path).set(value);
     } catch (error) {
@@ -44,7 +44,7 @@ export class RealtimeDatabaseService {
     }
   }
 
-  public async updateValue(path: string, updates: any): Promise<void> {
+  async updateValue(path: string, updates: any): Promise<void> {
     try {
       await this.database.ref(path).update(updates);
     } catch (error) {
@@ -53,7 +53,7 @@ export class RealtimeDatabaseService {
     }
   }
 
-  public async deleteValue(path: string): Promise<void> {
+  async deleteValue(path: string): Promise<void> {
     try {
       await this.database.ref(path).remove();
     } catch (error) {
@@ -62,7 +62,7 @@ export class RealtimeDatabaseService {
     }
   }
 
-  public async isPathPopulated(path: string): Promise<boolean> {
+  async isPathPopulated(path: string): Promise<boolean> {
     const snapshot = await this.database.ref(path).once("value");
     return snapshot.exists() && (snapshot.val() != null);
   }

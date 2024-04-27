@@ -13,7 +13,7 @@ export class FirestoreService {
   }
 
   // Add a document to the collection
-  public async addDocument(document: FirebaseFirestore.DocumentData): Promise<string> {
+  async addDocument(document: FirebaseFirestore.DocumentData): Promise<string> {
     const docRef = await this.collection.add(document);
     return docRef.id;
   }
@@ -22,7 +22,7 @@ export class FirestoreService {
     return documentId ? this.collection.doc(documentId) : this.collection.doc();
   }
 
-  public async addDocumentWithID(documentId: string, document: FirebaseFirestore.DocumentData): Promise<boolean> {
+  async addDocumentWithID(documentId: string, document: FirebaseFirestore.DocumentData): Promise<boolean> {
     const docRef = await this.collection.doc(documentId);
     docRef.set(document).finally(() => {
       return true;
@@ -33,7 +33,7 @@ export class FirestoreService {
   }
 
   // Get a document by its ID
-  public async getDocumentById(documentId: string): Promise<FirebaseFirestore.DocumentData> {
+  async getDocumentById(documentId: string): Promise<FirebaseFirestore.DocumentData> {
     const documentSnapshot = await this.collection.doc(documentId).get();
     if (documentSnapshot.exists) {
       return documentSnapshot;
@@ -42,23 +42,23 @@ export class FirestoreService {
     }
   }
 
-  public async getCollection(): Promise<FirebaseFirestore.DocumentData[]> {
+  async getCollection(): Promise<FirebaseFirestore.DocumentData[]> {
     const collectionSnapshot = await this.collection.get();
     const data = collectionSnapshot.docs.map((doc) => doc.data());
     return data;
   }
 
   // Update a document by its ID
-  public async updateDocument(documentId: string, updateData: FirebaseFirestore.UpdateData): Promise<void> {
+  async updateDocument(documentId: string, updateData: FirebaseFirestore.UpdateData): Promise<void> {
     await this.collection.doc(documentId).update(updateData);
   }
 
-  public async addToNode(documentId: string, value: FirebaseFirestore.DocumentData) {
+  async addToNode(documentId: string, value: FirebaseFirestore.DocumentData) {
     await this.collection.doc(documentId).set(value, {merge: true});
   }
 
   // Delete a document by its ID
-  public async deleteDocument(documentId: string): Promise<void> {
+  async deleteDocument(documentId: string): Promise<void> {
     await this.collection.doc(documentId).delete();
   }
 }
