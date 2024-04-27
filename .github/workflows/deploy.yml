@@ -29,6 +29,11 @@ jobs:
     needs: setup
     steps:
       - uses: actions/checkout@v3
+      - name: Restore Cached Node modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/functions/package-lock.json') }}
       - name: Lint code
         run: |
           cd functions;
@@ -39,6 +44,11 @@ jobs:
     needs: lint
     steps:
       - uses: actions/checkout@v3
+      - name: Restore Cached Node modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/functions/package-lock.json') }}
       - name: Create SA key
         run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > $HOME/gcloud.json
       - name: Deploy Cloud Functions
