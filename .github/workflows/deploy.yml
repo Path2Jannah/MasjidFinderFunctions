@@ -12,6 +12,10 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 18.x
+      - name: Install Dependencies 
+        run: 
+            cd functions;
+            npm ci;
       - name: Cache Node modules
         uses: actions/cache@v2
         with:
@@ -19,10 +23,7 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/functions/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-      - name: Install Dependencies
-        run: |
-          cd functions;
-          npm ci;
+      
 
   lint:
     runs-on: ubuntu-latest
