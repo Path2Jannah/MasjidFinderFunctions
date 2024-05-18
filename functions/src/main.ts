@@ -19,7 +19,7 @@ import {createUniqueID} from "./helper/DateLocationID";
 import {HadithRequest} from "./HadithRequest";
 import {Storage, Bucket} from "@google-cloud/storage";
 import {error} from "console";
-import { haversineDistance } from "./helper/DistanceCalculation";
+import {haversineDistance} from "./helper/DistanceCalculation";
 
 admin.initializeApp();
 // const googleMaps = new Client();
@@ -262,21 +262,21 @@ functions.https.onRequest(async (req, res) => {
   try {
     const collectionId = req.body.collectionId;
     const bookNumber = req.body.bookNumber;
-    let hadithData: Hadith[] = [];
+    const hadithData: Hadith[] = [];
     if (bookNumber == null) {
       const firebaseCollection = new FirestoreService(firestoreDatabase, `/HadithCollection/ddfbd6e6-ecfa-4081-8bdd-adcf6335bcfc/HadithCompilers/${collectionId}/Books`);
-      const numberOfBooks = await firebaseCollection.getBookNumber
-      for(let i=1; i < numberOfBooks.length; i++) {
+      const numberOfBooks = await firebaseCollection.getBookNumber;
+      for (let i=1; i < numberOfBooks.length; i++) {
         const allHadithInBook = getHadithData(collectionId, i);
         (await allHadithInBook).forEach((hadith) => {
           hadithData.push(hadith);
-        })
+        });
       }
     } else {
       const allHadithInBook = getHadithData(collectionId, bookNumber);
-        (await allHadithInBook).forEach((hadith) => {
-          hadithData.push(hadith);
-        })
+      (await allHadithInBook).forEach((hadith) => {
+        hadithData.push(hadith);
+      });
     }
     res.status(200).send(hadithData);
   } catch (error) {
@@ -726,7 +726,7 @@ async function processHadithData(scholarId: number, hadithData: HadithJson[], bo
 
 async function getHadithData(collectionId: number, bookNumber: number): Promise<Hadith[]> {
   const firebaseCollection = new FirestoreService(firestoreDatabase, `/HadithCollection/ddfbd6e6-ecfa-4081-8bdd-adcf6335bcfc/HadithCompilers/${collectionId}/Books/${bookNumber}/hadith`);
-  return firebaseCollection.getCollectionWithId()
+  return firebaseCollection.getCollectionWithId();
 }
 
 export const getHadithBookListFromStorage =

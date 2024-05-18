@@ -1,3 +1,7 @@
+/* eslint-disable valid-jsdoc */
+/* eslint-disable require-jsdoc */
+/* eslint-disable max-len */
+
 import * as fs from "fs";
 
 export interface JsonObject {

@@ -50,7 +50,7 @@ jobs:
       - name: Restore Cached Node modules
         uses: actions/cache@v3
         with:
-          path: ~/.npm
+          path: functions/node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('**/functions/package-lock.json') }}
       - name: Create SA key
         run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > $HOME/gcloud.json
