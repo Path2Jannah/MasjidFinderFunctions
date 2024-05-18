@@ -266,15 +266,15 @@ functions.https.onRequest(async (req, res) => {
     if (bookNumber == null) {
       const firebaseCollection = new FirestoreService(firestoreDatabase, `/HadithCollection/ddfbd6e6-ecfa-4081-8bdd-adcf6335bcfc/HadithCompilers/${collectionId}/Books`);
       const numberOfBooks = firebaseCollection.getBookNumbers(collectionId);
-      numberOfBooks.then(ids => {
+      numberOfBooks.then((ids) => {
         ids.forEach(async (id) => {
           const allHadithInBook = getHadithData(collectionId, id);
           (await allHadithInBook).forEach((hadith) => {
             console.log("HadithId", hadith.hadithNumber);
             hadithData.push(hadith);
           });
-        })
-      })
+        });
+      });
     } else {
       const allHadithInBook = getHadithData(collectionId, bookNumber);
       (await allHadithInBook).forEach((hadith) => {
