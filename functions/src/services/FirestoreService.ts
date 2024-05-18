@@ -52,13 +52,32 @@ export class FirestoreService {
     const collectionSnapshot = await this.collection.get();
     const data = collectionSnapshot.docs.map((doc) => {
       const docData = doc.data();
+      console.log("Document:", docData);
       return {
         id: parseInt(doc.id),
-        chapterId: docData.chapterId,
-        chapterTitle: docData.chapterTitle,
-        chapterNumber: docData.chapterNumber,
-        bookNumber: docData.bookNumber,
+        chapterId: docData.chapter_id,
+        chapterTitle: docData.chapter_title,
+        chapterNumber: docData.chapter_num,
+        bookNumber: docData.book_number,
         hadithNumber: docData.hadithNumber,
+        text: docData.text,
+      } as Hadith;
+    });
+    return data;
+  }
+
+  async getHadithCollectionWithId(collectionId: number, bookNumber: number): Promise<Hadith[]> {
+    const collectionSnapshot = await this.collection.get();
+    const data = collectionSnapshot.docs.map((doc) => {
+      const docData = doc.data();
+      console.log("Document:", docData);
+      return {
+        id: collectionId,
+        chapterId: docData.chapter_id,
+        chapterTitle: docData.chapter_title,
+        chapterNumber: docData.chapter_num,
+        bookNumber: bookNumber,
+        hadithNumber: doc.id,
         text: docData.text,
       } as Hadith;
     });

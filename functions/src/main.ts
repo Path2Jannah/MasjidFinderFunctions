@@ -736,7 +736,7 @@ async function getHadithData(collectionId: number, bookNumber: number): Promise<
   console.log("collectionID:", collectionId, "BookNumber:", bookNumber);
   console.log(`/HadithCollection/ddfbd6e6-ecfa-4081-8bdd-adcf6335bcfc/HadithCompilers/${collectionId}/Books/${bookNumber}/hadith`);
   const firebaseCollection = new FirestoreService(firestoreDatabase, `/HadithCollection/ddfbd6e6-ecfa-4081-8bdd-adcf6335bcfc/HadithCompilers/${collectionId}/Books/${bookNumber}/hadith`);
-  return firebaseCollection.getCollectionWithId();
+  return firebaseCollection.getHadithCollectionWithId(collectionId, bookNumber);
 }
 
 export const getHadithBookListFromStorage =
