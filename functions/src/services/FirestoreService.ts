@@ -65,11 +65,9 @@ export class FirestoreService {
     return data;
   }
 
-  async getBookNumber(collectionId:number): Promise<number[]> {
+  async getBookNumbers(collectionId: number): Promise<number[]> {
     const collectionSnapshot = await this.collection.get();
-    const data = collectionSnapshot.docs.map((doc) => {
-      return parseInt(doc.id);
-    });
+    const data = collectionSnapshot.docs.map((doc) => parseInt(doc.id));
     return data;
   }
 

@@ -266,8 +266,8 @@ functions.https.onRequest(async (req, res) => {
     if (bookNumber == null) {
       const firebaseCollection = new FirestoreService(firestoreDatabase, `/HadithCollection/ddfbd6e6-ecfa-4081-8bdd-adcf6335bcfc/HadithCompilers/${collectionId}/Books`);
       const numberOfBooks = await firebaseCollection.getBookNumber;
-      console.log("Number of books", numberOfBooks.length);
-      for (let i=1; i < numberOfBooks.length; i++) {
+      console.log("Number of books", numberOfBooks);
+      for (let i=1; i < numberOfBooks; i++) {
         console.log("Proccessing book", i);
         const allHadithInBook = getHadithData(collectionId, i);
         console.log((await allHadithInBook).at(1));
