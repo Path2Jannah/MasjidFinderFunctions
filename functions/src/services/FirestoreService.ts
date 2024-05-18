@@ -48,6 +48,35 @@ export class FirestoreService {
     return data;
   }
 
+  async getCollectionWithId(): Promise<Hadith[]> {
+    const collectionSnapshot = await this.collection.get();
+    const data = collectionSnapshot.docs.map((doc) => {
+      const docData = doc.data();
+      return {
+        id: parseInt(doc.id),
+        chapterId: docData.chapterId,
+        chapterTitle: docData.chapterTitle,
+        chapterNumber: docData.chapterNumber,
+        bookNumber: docData.bookNumber,
+        hadithNumber: docData.hadithNumber,
+        text: docData.text
+      } as Hadith;
+    });
+    return data;
+  }
+
+  async getBookNumber(collectionId:number): Promise<number[]> {
+    const collectionSnapshot = await this.collection.get();
+    const data = collectionSnapshot.docs.map((doc) => {
+      return parseInt(doc.id)
+    })
+    return data;
+  }
+
+  getListOfDocuments() {
+    return this.collection.listDocuments
+  }
+
   // Update a document by its ID
   async updateDocument(documentId: string, updateData: FirebaseFirestore.UpdateData): Promise<void> {
     await this.collection.doc(documentId).update(updateData);

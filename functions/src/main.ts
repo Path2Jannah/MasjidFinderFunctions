@@ -15,12 +15,11 @@ import {SalaahTime} from "./models/SalaahTime";
 import {PredefinedLocations} from "./models/PredefinedLocations";
 import {DateTimeHelper} from "./helper/DateTimeHelper";
 import {Format, Locale} from "./helper/DateEnums";
-import {validateSalaahHistoryRequest} from "./models/UpdateSalaahStatusRequest";
-import {HTTPType, validateHttpRequest} from "./helper/HTTPRequestType";
 import {createUniqueID} from "./helper/DateLocationID";
 import {HadithRequest} from "./HadithRequest";
 import {Storage, Bucket} from "@google-cloud/storage";
 import {error} from "console";
+import { haversineDistance } from "./helper/DistanceCalculation";
 
 admin.initializeApp();
 // const googleMaps = new Client();
@@ -64,6 +63,77 @@ new FirestoreService(firestoreDatabase, "/HadithCollection/ddfbd6e6-ecfa-4081-8b
 const realtimeDatabaseService =
 new RealtimeDatabaseService(realtimeDatabase);
 
+/**
+ * Admin level API that is triggered on a Google cloud schedular.
+ *
+ * Pulls in the Salaah times from the external API.
+ * Then populates the Realtime database with the response from the external API.
+ */
+export const SalaahTimesDailyCapeTown =
+functions.https.onRequest(async (_req, res) => {
+  const currentDate = dateTimeHelper.getDate(Locale.SOUTH_AFRICA, "Africa/Johannesburg", Format.API_DATE);
+  const dateLocationID = createUniqueID(currentDate, "CT_ZA");
+  const timesPath = "/CapeTown/Daily/Times";
+  const datePath = "/CapeTown/Daily/Dates";
+  const idPath = "/CapeTown/Daily/";
+  salaahTimeRequests.getSalaahTimesDaily(currentDate, PredefinedLocations.CAPE_TOWN).
+      then(async (response:SalaahTime) => {
+        console.log("Success: ", response);
+        const salaahTimes = response.data.timings;
+        const dates = response.data.date;
+        const id = {dateLocationID};
+        realtimeDatabaseService.addData(timesPath, salaahTimes);
+        realtimeDatabaseService.addData(datePath, dates);
+        realtimeDatabaseService.addData(idPath, id);
+        res.status(200).send(successResponse + "IDToken: " + dateLocationID);
+      })
+      .catch((error) => {
+        console.log("Fatal error: ", error as string);
+        res.status(400).send(getErrorResponse(error as string));
+      });
+});
+
+type myResults = {
+  name: string,
+  distance: number
+}
+
+export const getMasjidList =
+functions.https.onRequest(async (req, res) => {
+  const userLat = req.body.lat;
+  const userLong = req.body.long;
+
+  if (!userLat || !userLong) {
+    res.status(400).send(getErrorResponse("INVALID REQUEST"));
+  }
+
+  const snapshot = await masjiddB.getCollection();
+  const results: myResults[] = [];
+
+  snapshot.forEach((doc) => {
+    const geoPoint = doc["co-ord"];
+    if (geoPoint != null) {
+      const latitude = geoPoint.latitude as number;
+      const longitude = geoPoint.longitude as number;
+      // Use latitude and longitude as needed
+
+      const distance = haversineDistance(userLat, userLong, latitude, longitude);
+
+      results.push({
+        name: doc.masjid_name,
+        distance: distance,
+      });
+    } else {
+      // Handle the case where the GeoPoint is null
+      console.log("No value");
+    }
+  });
+
+  const sortedResults = results.sort((a, b) => a.distance - b.distance);
+
+  res.status(200).send(sortedResults);
+});
+
 interface HadithCollection {
   id: number
   name: string,
@@ -105,11 +175,6 @@ interface HadithBooksJson {
   hadithStartNumber: number,
   hadithEndNumber: number,
 }
-
-export const testString = 
-functions.https.onRequest(async (req, res) => {
-  res.send(req.body.text).status(200);
-})
 
 export const saveHadithCollections =
 functions.https.onRequest(async (req, res) => {
@@ -189,6 +254,34 @@ export const saveHadithBooks = functions.https.onRequest(async (req, res) => {
   } catch (err) {
     console.error("Error:", err);
     res.status(500).send("Internal Server Error");
+  }
+});
+
+export const getHadithBooks =
+functions.https.onRequest(async (req, res) => {
+  try {
+    const collectionId = req.body.collectionId;
+    const bookNumber = req.body.bookNumber;
+    let hadithData: Hadith[] = [];
+    if (bookNumber == null) {
+      const firebaseCollection = new FirestoreService(firestoreDatabase, `/HadithCollection/ddfbd6e6-ecfa-4081-8bdd-adcf6335bcfc/HadithCompilers/${collectionId}/Books`);
+      const numberOfBooks = await firebaseCollection.getBookNumber
+      for(let i=1; i < numberOfBooks.length; i++) {
+        const allHadithInBook = getHadithData(collectionId, i);
+        (await allHadithInBook).forEach((hadith) => {
+          hadithData.push(hadith);
+        })
+      }
+    } else {
+      const allHadithInBook = getHadithData(collectionId, bookNumber);
+        (await allHadithInBook).forEach((hadith) => {
+          hadithData.push(hadith);
+        })
+    }
+    res.status(200).send(hadithData);
+  } catch (error) {
+    console.error("Error retrieving file:", error);
+    res.status(500).send("Error retriving from Firebase Storage.");
   }
 });
 
@@ -631,22 +724,10 @@ async function processHadithData(scholarId: number, hadithData: HadithJson[], bo
   await batch.commit();
 }
 
-export const getHadithBookFromStorage =
-functions.https.onRequest(async (req, res) => {
-  try {
-    const bookNumber = req.body.bookNumber;
-    const fileName = `Hadith Muslim/muslim_book${bookNumber}_hadiths.json`;
-    console.log(`Looking for ${fileName}`);
-    const file = storage.file(fileName);
-
-    const [fileData] = await file.download();
-
-    res.status(200).send(fileData);
-  } catch (error) {
-    console.error("Error retrieving file:", error);
-    res.status(500).send("Error retriving from Firebase Storage.");
-  }
-});
+async function getHadithData(collectionId: number, bookNumber: number): Promise<Hadith[]> {
+  const firebaseCollection = new FirestoreService(firestoreDatabase, `/HadithCollection/ddfbd6e6-ecfa-4081-8bdd-adcf6335bcfc/HadithCompilers/${collectionId}/Books/${bookNumber}/hadith`);
+  return firebaseCollection.getCollectionWithId()
+}
 
 export const getHadithBookListFromStorage =
 functions.https.onRequest(async (req, res) => {
@@ -680,77 +761,6 @@ functions.https.onRequest(async (req, res) => {
   }
 });
 
-/**
- * Admin level API that is triggered on a Google cloud schedular.
- *
- * Pulls in the Salaah times from the external API.
- * Then populates the Realtime database with the response from the external API.
- */
-export const SalaahTimesDailyCapeTown =
-functions.https.onRequest(async (_req, res) => {
-  const currentDate = dateTimeHelper.getDate(Locale.SOUTH_AFRICA, "Africa/Johannesburg", Format.API_DATE);
-  const dateLocationID = createUniqueID(currentDate, "CT_ZA");
-  const timesPath = "/CapeTown/Daily/Times";
-  const datePath = "/CapeTown/Daily/Dates";
-  const idPath = "/CapeTown/Daily/";
-  salaahTimeRequests.getSalaahTimesDaily(currentDate, PredefinedLocations.CAPE_TOWN).
-      then(async (response:SalaahTime) => {
-        console.log("Success: ", response);
-        const salaahTimes = response.data.timings;
-        const dates = response.data.date;
-        const id = {dateLocationID};
-        realtimeDatabaseService.addData(timesPath, salaahTimes);
-        realtimeDatabaseService.addData(datePath, dates);
-        realtimeDatabaseService.addData(idPath, id);
-        res.status(200).send(successResponse + "IDToken: " + dateLocationID);
-      })
-      .catch((error) => {
-        console.log("Fatal error: ", error as string);
-        res.status(400).send(getErrorResponse(error as string));
-      });
-});
-
-type myResults = {
-  name: string,
-  distance: number
-}
-
-export const getMasjidList =
-functions.https.onRequest(async (req, res) => {
-  const userLat = req.body.lat;
-  const userLong = req.body.long;
-
-  if (!userLat || !userLong) {
-    res.status(400).send(getErrorResponse("INVALID REQUEST"));
-  }
-
-  const snapshot = await masjiddB.getCollection();
-  const results: myResults[] = [];
-
-  snapshot.forEach((doc) => {
-    const geoPoint = doc["co-ord"];
-    if (geoPoint != null) {
-      const latitude = geoPoint.latitude as number;
-      const longitude = geoPoint.longitude as number;
-      // Use latitude and longitude as needed
-
-      const distance = haversineDistance(userLat, userLong, latitude, longitude);
-
-      results.push({
-        name: doc.masjid_name,
-        distance: distance,
-      });
-    } else {
-      // Handle the case where the GeoPoint is null
-      console.log("No value");
-    }
-  });
-
-  const sortedResults = results.sort((a, b) => a.distance - b.distance);
-
-  res.status(200).send(sortedResults);
-});
-
 // export const SalaahTimesDaily =
 // functions.https.onRequest(async (req, res) => {
 //   if (isSalaahTimeLocationRequestBody(req.body)) {
@@ -796,16 +806,6 @@ functions.https.onRequest(async (req, res) => {
 //     res.status(400).send(getErrorResponse("INVALID REQUEST"));
 //   }
 // });
-
-export const getHadith =
-functions.https.onRequest(async (_, res) => {
-  try {
-    const hadith = await hadithRequest.getRandomHadith();
-    res.status(200).send({hadith});
-  } catch (error) {
-    res.status(400).send(getErrorResponse("Something went wrong"));
-  }
-});
 
 // Function to validate the request body
 // function validateDataStructure(data: any, expectedData: SalaahTimeLocationRequest): boolean {
@@ -847,39 +847,6 @@ export const CreateNewUserNode = functions.auth.user().onCreate(async (user: adm
  */
 export const DeleteUserNode = functions.auth.user().onDelete(async (user: admin.auth.UserRecord) => {
   await userdB.deleteDocument(user.uid);
-});
-
-// TODO: Bug here where the interface isn't able to match up to the the firestore database object.
-export const UpdateDailySalaahHistory =
-functions.https.onRequest(async (req, res) => {
-  try {
-    validateHttpRequest(req.method, HTTPType.POST);
-    if (validateSalaahHistoryRequest(req.body)) {
-      try {
-        await userdB.getDocumentById(req.body.userID);
-        console.log("Found");
-      } catch {
-        console.log("Erro finding user");
-        res.status(400).send({error: "No user found."});
-      }
-      await userdB.addToNode(req.body.userID, {salaahHistory: req.body.salaahHistory});
-      console.log("Update complete");
-      res.status(200).send({success: "Complete"});
-    } else {
-      res.status(400).send(getErrorResponse("INVALID REQUEST"));
-    }
-  } catch (error: any) {
-    let statusCode = 500; // Internal Server Error by default
-    let errorMessage = "An error occurred";
-    console.log(error.message);
-
-    if (error.code === "unimplemented") {
-      statusCode = 400; // Bad Request for incorrect request type
-      errorMessage = error.message;
-    }
-
-    res.status(statusCode).send(errorMessage);
-  }
 });
 
 // export const writeLocationGeocodeTableToRealtimeDatabase =
@@ -1184,26 +1151,3 @@ functions.https.onRequest(async (req, res) => {
 //   latitude: number;
 //   longitude: number;
 // }
-
-/**
- * Calculates the distance (in kms) between point A and B using earth's radius as the spherical surface
- * @param pointA Coordinates from Point A
- * @param pointB Coordinates from Point B
- * Based on https://www.movable-type.co.uk/scripts/latlong.html
- */
-function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
-  const radius = 6371; // Earth radius in km
-
-  // convert latitude and longitude to radians
-  const deltaLatitude = (lat2 - lat1) * Math.PI / 180;
-  const deltaLongitude = (lon2 - lon1) * Math.PI / 180;
-
-  const halfChordLength = Math.cos(
-      lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-      Math.sin(deltaLongitude/2) * Math.sin(deltaLongitude/2) +
-      Math.sin(deltaLatitude/2) * Math.sin(deltaLatitude/2);
-
-  const angularDistance = 2 * Math.atan2(Math.sqrt(halfChordLength), Math.sqrt(1 - halfChordLength));
-
-  return radius * angularDistance;
-}

@@ -7,7 +7,7 @@ import {AxiosService} from "./services/AxiosService";
 import {HadithMapper} from "./mappers/HadithMapper";
 import DateTimeHelper from "./helper/DateTimeHelper";
 import {Format, Locale} from "./helper/DateEnums";
-import { saveJsonToFile } from "./helper/SaveJson";
+import {saveJsonToFile} from "./helper/SaveJson";
 
 const dateTimeHelper = new DateTimeHelper();
 
