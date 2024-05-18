@@ -68,6 +68,7 @@ export class FirestoreService {
 
   async getHadithCollectionWithId(collectionId: number, bookNumber: number): Promise<Hadith[]> {
     const collectionSnapshot = await this.collection.get();
+    console.log(collectionSnapshot.docs.length);
     const data = collectionSnapshot.docs.map((doc) => {
       const docData = doc.data();
       console.log("Document:", docData);
