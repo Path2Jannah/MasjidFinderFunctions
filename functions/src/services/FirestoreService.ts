@@ -78,7 +78,7 @@ export class FirestoreService {
   }
 
   // Update a document by its ID
-  async updateDocument(documentId: string, updateData: FirebaseFirestore.UpdateData): Promise<void> {
+  async updateDocument(documentId: string, updateData: FirebaseFirestore.UpdateData<FirebaseFirestore.DocumentData>): Promise<void> {
     await this.collection.doc(documentId).update(updateData);
   }
 

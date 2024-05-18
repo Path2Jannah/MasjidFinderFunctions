@@ -16,7 +16,7 @@ import {PredefinedLocations} from "./models/PredefinedLocations";
 import {DateTimeHelper} from "./helper/DateTimeHelper";
 import {Format, Locale} from "./helper/DateEnums";
 import {createUniqueID} from "./helper/DateLocationID";
-import {HadithRequest} from "./HadithRequest";
+// import {HadithRequest} from "./HadithRequest";
 import {Storage, Bucket} from "@google-cloud/storage";
 import {error} from "console";
 import {haversineDistance} from "./helper/DistanceCalculation";
@@ -31,8 +31,8 @@ const storage: Bucket = new Storage().bucket("gs://masjidfinder-bb912.appspot.co
 const salaahTimeRequests =
 new SalaahTimeRequests();
 
-const hadithRequest =
-new HadithRequest();
+// const hadithRequest =
+// new HadithRequest();
 
 const successResponse = {
   status: "success",
