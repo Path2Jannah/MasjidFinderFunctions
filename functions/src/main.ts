@@ -271,9 +271,9 @@ functions.https.onRequest(async (req, res) => {
       });
       numberOfBooks.then((ids) => {
         console.log(ids);
-        ids.forEach(async (id) => {
-          console.log("ID", id);
-          const allHadithInBook = getHadithData(collectionId, id);
+        ids.forEach(async (bookNumber) => {
+          console.log("ID", bookNumber);
+          const allHadithInBook = getHadithData(collectionId, bookNumber);
           (await allHadithInBook).forEach((hadith) => {
             console.log("HadithId", hadith);
             hadithData.push(hadith);
@@ -733,6 +733,8 @@ async function processHadithData(scholarId: number, hadithData: HadithJson[], bo
 }
 
 async function getHadithData(collectionId: number, bookNumber: number): Promise<Hadith[]> {
+  console.log("collectionID:", collectionId, "BookNumber:", bookNumber);
+  console.log(`/HadithCollection/ddfbd6e6-ecfa-4081-8bdd-adcf6335bcfc/HadithCompilers/${collectionId}/Books/${bookNumber}/hadith`);
   const firebaseCollection = new FirestoreService(firestoreDatabase, `/HadithCollection/ddfbd6e6-ecfa-4081-8bdd-adcf6335bcfc/HadithCompilers/${collectionId}/Books/${bookNumber}/hadith`);
   return firebaseCollection.getCollectionWithId();
 }
