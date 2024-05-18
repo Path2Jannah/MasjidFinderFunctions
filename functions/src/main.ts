@@ -849,6 +849,23 @@ export const DeleteUserNode = functions.auth.user().onDelete(async (user: admin.
   await userdB.deleteDocument(user.uid);
 });
 
+export const getHadithBookFromStorage =
+functions.https.onRequest(async (req, res) => {
+  try {
+    const bookNumber = req.body.bookNumber;
+    const fileName = `Hadith Muslim/muslim_book${bookNumber}_hadiths.json`;
+    console.log(`Looking for ${fileName}`);
+    const file = storage.file(fileName);
+
+    const [fileData] = await file.download();
+
+    res.status(200).send(fileData);
+  } catch (error) {
+    console.error("Error retrieving file:", error);
+    res.status(500).send("Error retriving from Firebase Storage.");
+  }
+});
+
 // export const writeLocationGeocodeTableToRealtimeDatabase =
 // functions.https.onRequest(async (req, res) => {
 //   const data = await getAreaList();
