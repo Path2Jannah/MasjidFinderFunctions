@@ -269,17 +269,16 @@ functions.https.onRequest(async (req, res) => {
       numberOfBooks.forEach(async (id) => {
         // Id can be used as the book number.
         const allHadithInBook = await getHadithData(collectionId, id);
-        allHadithInBook.forEach((hadith) => {
-          hadithData.push(hadith);
-        });
+        hadithData.push(...allHadithInBook);
       });
+      res.status(200).send(hadithData);
     } else {
       const allHadithInBook = getHadithData(collectionId, bookNumber);
       (await allHadithInBook).forEach((hadith) => {
         hadithData.push(hadith);
       });
+      res.status(200).send(hadithData);
     }
-    res.status(200).send(hadithData);
   } catch (error) {
     console.error("Error retrieving file:", error);
     res.status(500).send("Error retriving from Firebase Storage.");
