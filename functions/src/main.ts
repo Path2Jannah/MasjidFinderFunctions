@@ -269,8 +269,8 @@ functions.https.onRequest(async (req, res) => {
       (await numberOfBooks).forEach(async (id) => {
         console.log("IDs:", id);
         console.log("ID", id);
-        const allHadithInBook = getHadithData(collectionId, id);
-        (await allHadithInBook).forEach((hadith) => {
+        const allHadithInBook = await getHadithData(collectionId, id);
+        allHadithInBook.forEach((hadith) => {
           console.log("HadithId", hadith);
           hadithData.push(hadith);
         });
