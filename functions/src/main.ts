@@ -267,8 +267,7 @@ functions.https.onRequest(async (req, res) => {
       const firebaseCollection = new FirestoreService(firestoreDatabase, `/HadithCollection/ddfbd6e6-ecfa-4081-8bdd-adcf6335bcfc/HadithCompilers/${collectionId}/Books`);
       const numberOfBooks = await firebaseCollection.getBookNumbers(collectionId);
       numberOfBooks.forEach(async (id) => {
-        //Id can be used as the book number.
-        console.log("Book number: ", id);
+        // Id can be used as the book number.
         const allHadithInBook = await getHadithData(collectionId, id);
         allHadithInBook.forEach((hadith) => {
           hadithData.push(hadith);
