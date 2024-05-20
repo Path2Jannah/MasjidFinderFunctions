@@ -266,13 +266,17 @@ functions.https.onRequest(async (req, res) => {
     if (bookNumber == null) {
       const firebaseCollection = new FirestoreService(firestoreDatabase, `/HadithCollection/ddfbd6e6-ecfa-4081-8bdd-adcf6335bcfc/HadithCompilers/${collectionId}/Books`);
       const numberOfBooks = await firebaseCollection.getBookNumbers(collectionId);
-      numberOfBooks.forEach(async (id) => {
-        // Id can be used as the book number.
-        console.log("Processing book", id.toString);
+
+      // Create an array of promises for all the async operations
+      const hadithPromises = numberOfBooks.map(async (id) => {
+        console.log("Processing book", id.toString());
         const allHadithInBook = await getHadithData(collectionId, id);
         hadithData.push(...allHadithInBook);
-        console.log(hadithData);
       });
+
+      // Wait for all the promises to resolve
+      await Promise.all(hadithPromises);
+
       res.status(200).send(hadithData);
     } else {
       const allHadithInBook = getHadithData(collectionId, bookNumber);
