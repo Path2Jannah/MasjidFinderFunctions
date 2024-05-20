@@ -266,18 +266,13 @@ functions.https.onRequest(async (req, res) => {
     if (bookNumber == null) {
       const firebaseCollection = new FirestoreService(firestoreDatabase, `/HadithCollection/ddfbd6e6-ecfa-4081-8bdd-adcf6335bcfc/HadithCompilers/${collectionId}/Books`);
       const numberOfBooks = firebaseCollection.getBookNumbers(collectionId);
-      (await numberOfBooks).forEach((id) => {
+      (await numberOfBooks).forEach(async (id) => {
         console.log("IDs:", id);
-      });
-      numberOfBooks.then((ids) => {
-        console.log(ids);
-        ids.forEach(async (bookNumber) => {
-          console.log("ID", bookNumber);
-          const allHadithInBook = getHadithData(collectionId, bookNumber);
-          (await allHadithInBook).forEach((hadith) => {
-            console.log("HadithId", hadith);
-            hadithData.push(hadith);
-          });
+        console.log("ID", id);
+        const allHadithInBook = getHadithData(collectionId, id);
+        (await allHadithInBook).forEach((hadith) => {
+          console.log("HadithId", hadith);
+          hadithData.push(hadith);
         });
       });
     } else {
