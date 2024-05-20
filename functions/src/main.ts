@@ -265,13 +265,12 @@ functions.https.onRequest(async (req, res) => {
     const hadithData: Hadith[] = [];
     if (bookNumber == null) {
       const firebaseCollection = new FirestoreService(firestoreDatabase, `/HadithCollection/ddfbd6e6-ecfa-4081-8bdd-adcf6335bcfc/HadithCompilers/${collectionId}/Books`);
-      const numberOfBooks = firebaseCollection.getBookNumbers(collectionId);
-      (await numberOfBooks).forEach(async (id) => {
-        console.log("IDs:", id);
-        console.log("ID", id);
+      const numberOfBooks = await firebaseCollection.getBookNumbers(collectionId);
+      numberOfBooks.forEach(async (id) => {
+        //Id can be used as the book number.
+        console.log("Book number: ", id);
         const allHadithInBook = await getHadithData(collectionId, id);
         allHadithInBook.forEach((hadith) => {
-          console.log("HadithId", hadith);
           hadithData.push(hadith);
         });
       });
@@ -728,10 +727,7 @@ async function processHadithData(scholarId: number, hadithData: HadithJson[], bo
 }
 
 async function getHadithData(collectionId: number, bookNumber: number): Promise<Hadith[]> {
-  console.log("collectionID:", collectionId, "BookNumber:", bookNumber);
-  console.log(`/HadithCollection/ddfbd6e6-ecfa-4081-8bdd-adcf6335bcfc/HadithCompilers/${collectionId}/Books/${bookNumber}/hadith`);
   const firebaseCollection = new FirestoreService(firestoreDatabase, `/HadithCollection/ddfbd6e6-ecfa-4081-8bdd-adcf6335bcfc/HadithCompilers/${collectionId}/Books/${bookNumber}/hadith`);
-  console.log(firebaseCollection.getHadithCollectionWithId(collectionId, bookNumber));
   return firebaseCollection.getHadithCollectionWithId(collectionId, bookNumber);
 }
 
