@@ -268,8 +268,10 @@ functions.https.onRequest(async (req, res) => {
       const numberOfBooks = await firebaseCollection.getBookNumbers(collectionId);
       numberOfBooks.forEach(async (id) => {
         // Id can be used as the book number.
+        console.log("Processing book", id.toString);
         const allHadithInBook = await getHadithData(collectionId, id);
         hadithData.push(...allHadithInBook);
+        console.log(hadithData);
       });
       res.status(200).send(hadithData);
     } else {
